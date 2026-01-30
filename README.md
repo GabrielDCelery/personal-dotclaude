@@ -18,7 +18,7 @@ Make sure Claude Code has been installed on your machine [Claude Code Installati
 Clone this repo:
 
 ```sh
-git clone git@github.com:personal/personal-dotclaude.git
+git clone git@github.com:GabrielDCelery/personal-dotclaude.git
 cd personal-dotclaude
 ```
 
@@ -26,10 +26,10 @@ Then choose one of the following options:
 
 ### Option A: Per-project setup
 
-Symlink the `.personal-claude` directory into a specific project and add `.claude` to the project's gitignore.
+Symlink the `.dotclaude` directory into a specific project and add `.claude` to the project's gitignore.
 
 ```sh
-ln -s /path/to/the/cloned/dotclaude/.personal-claude /path/to/your-project/.claude
+ln -s /path/to/the/cloned/dotclaude/.dotclaude /path/to/your-project/.claude
 echo '.claude' >> /path/to/your-project/.gitignore
 ```
 
@@ -39,12 +39,12 @@ Symlink the `CLAUDE.md` and `rules` into your existing `~/.claude` directory:
 
 ```sh
 # The below is assuming you are in the dotclaude repo dir
-ln -s $(pwd)/.personal-claude/CLAUDE.md ~/.claude/CLAUDE.md
-ln -s $(pwd)/.personal-claude/rules ~/.claude/rules
+ln -s $(pwd)/.personal-dotclaude/CLAUDE.md ~/.claude/CLAUDE.md
+ln -s $(pwd)/.personal-dotclaude/rules ~/.claude/rules
 ```
 
 > [!WARNING]
-> Don't symlink the entire `.personal-claude` directory to home as `~/.claude` - the home directory contains Claude Code's data files (cache, history, settings, etc.).
+> Don't symlink the entire `.dotclaude` directory to home as `~/.claude` - the home directory contains Claude Code's data files (cache, history, settings, etc.).
 
 ## How to use it after setup
 
@@ -72,7 +72,7 @@ your-project/
 ```
 
 > [!NOTE]
-> Why `.personal-claude` and not `.claude`? Because the default dotfiles dir is .claude and wanted to make sure there are no accidental naming conflict shannenigans
+> Why `.dotclaude` and not `.claude`? Because the default dotfiles dir is .claude and wanted to make sure there are no accidental naming conflict shannenigans
 
 > [!NOTE]
 > To update, run `git pull` in this directory. Symlinks pick up changes automatically.
