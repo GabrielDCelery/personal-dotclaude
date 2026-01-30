@@ -38,6 +38,7 @@ Symlink the `CLAUDE.md` and `rules` into your existing `~/.claude` directory:
 
 ```sh
 # The below is assuming you are in the dotclaude repo dir
+ln -s $(pwd)/.dotclaude/settings.json ~/.claude/settings.json
 ln -s $(pwd)/.dotclaude/CLAUDE.md ~/.claude/CLAUDE.md
 ln -s $(pwd)/.dotclaude/rules ~/.claude/rules
 ```
