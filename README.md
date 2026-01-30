@@ -6,9 +6,8 @@ Shared Claude Code configuration for all company repositories. Provides default 
 
 ```
 .dotclaude/
-├── CLAUDE.md              # Default project context (tech stack, conventions)
 └── rules/
-    └── readme-style.md    # README generation guidelines
+    └── readme-styles.md    # README generation guidelines
 ```
 
 ## Setup
@@ -39,8 +38,7 @@ Symlink the `CLAUDE.md` and `rules` into your existing `~/.claude` directory:
 
 ```sh
 # The below is assuming you are in the dotclaude repo dir
-ln -s $(pwd)/.personal-dotclaude/CLAUDE.md ~/.claude/CLAUDE.md
-ln -s $(pwd)/.personal-dotclaude/rules ~/.claude/rules
+ln -s $(pwd)/.dotclaude/rules ~/.claude/rules
 ```
 
 > [!WARNING]
@@ -72,7 +70,7 @@ your-project/
 ```
 
 > [!NOTE]
-> Why `.dotclaude` and not `.claude`? Because the default dotfiles dir is .claude and wanted to make sure there are no accidental naming conflict shannenigans
+> Why `.dotclaude` and not `.claude`? Because the default dotfiles dir is .claude and wanted to make sure there are no accidental naming conflict shenanigans
 
 > [!NOTE]
 > To update, run `git pull` in this directory. Symlinks pick up changes automatically.
