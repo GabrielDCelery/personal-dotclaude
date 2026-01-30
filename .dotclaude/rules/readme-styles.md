@@ -4,7 +4,7 @@ When asked to create or improve a README, follow this process.
 
 ## Analysis Phase
 
-1. Scan project structure for: package.json, tsconfig.json, go.mod, pyproject.toml, uv.lock, poetry.lock, Dockerfile, docker-compose.yml, Makefile, mise.toml, Taskfile.yml
+1. Scan project structure for: package.json, tsconfig.json, go.mod, pyproject.toml, uv.lock, poetry.lock, Dockerfile, docker-compose.yml, Makefile, mise.toml, Taskfile.yml, ansible.cfg, playbooks/, inventory/, roles/
 2. Check for existing docs in /docs, any \*.md files scattered in the project, and existing README.md (may be outdated)
 3. Check CI/CD files (.github/workflows, .circleci/, buildspec.yml) for deployment info
 
@@ -19,6 +19,7 @@ When asked to create or improve a README, follow this process.
 | Run command  | Makefile, Taskfile.yml, mise.toml, package.json scripts                     |
 | Test command | Makefile, Taskfile.yml, mise.toml, package.json scripts                     |
 | Env vars     | .env.example, docker-compose.yml, os.Getenv/process.env                     |
+| Provisioning | ansible.cfg, playbooks/, inventory/, roles/, group_vars/, host_vars/       |
 | Deployment   | .github/workflows, .circleci/, infrastructure/, \*.tf files, serverless.yml |
 
 ## Required Sections
@@ -54,6 +55,7 @@ make run
 - **Database**: DynamoDB / RDS (PostgreSQL, MySQL) / None
 - **Messaging**: SQS / SNS / None
 - **Storage**: S3 / None
+- **Provisioning**: Ansible / None
 - **External APIs**:
 
 ## Configuration
@@ -72,6 +74,7 @@ make lint
 
 ## Deployment
 
+- **Provisioning**: [Ansible playbooks / roles - describe what they configure] / None
 - **Production**: Deployed via [CircleCI / GitHub Actions / CodePipeline] to [ECS / Lambda]
 - **Environments**: dev / staging / prod
 ```
