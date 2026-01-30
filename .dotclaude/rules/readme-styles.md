@@ -52,10 +52,11 @@ make run
 ## Architecture
 
 - **Language/Framework**:
-- **Database**: DynamoDB / RDS (PostgreSQL, MySQL) / None
+- **Database**: PostgreSQL / SQLite / DynamoDB / None
+- **Hosting**: AWS / Azure / DigitalOcean / On-prem / None
 - **Messaging**: SQS / SNS / None
-- **Storage**: S3 / None
-- **Provisioning**: Ansible / None
+- **Storage**: S3 / OneDrive / Local filesystem / None
+- **Provisioning**: Ansible / Terraform / CDK / None
 - **External APIs**:
 
 ## Configuration
@@ -63,7 +64,7 @@ make run
 | Variable | Description | Required | Default |
 | -------- | ----------- | -------- | ------- |
 
-Secrets are stored in: [SSM Parameter Store / Secrets Manager path]
+Secrets are stored in: [SSM Parameter Store / Secrets Manager / Ansible Vault / .env / None]
 
 ## Development
 
@@ -75,7 +76,8 @@ make lint
 ## Deployment
 
 - **Provisioning**: [Ansible playbooks / roles - describe what they configure] / None
-- **Production**: Deployed via [CircleCI / GitHub Actions / CodePipeline] to [ECS / Lambda]
+- **Infrastructure**: [AWS (ECS / Lambda) / Azure / DigitalOcean / On-prem server]
+- **CI/CD**: [CircleCI / GitHub Actions / CodePipeline / Manual]
 - **Environments**: dev / staging / prod
 ```
 
