@@ -18,5 +18,11 @@
     "DISABLE_TELEMETRY": "1",
     "DISABLE_ERROR_REPORTING": "1"
   },
-  "companyAnnouncements": ["Wakey wakey, eggs and bakey"]
+  "companyAnnouncements": ["Wakey wakey, eggs and bakey"],
+  "statusLine": {
+    "type": "command",
+    "command": "bunx -y ccstatusline@latest",
+    "padding": 0
+  }
 }
+
