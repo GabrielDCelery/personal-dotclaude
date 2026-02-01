@@ -21,11 +21,43 @@ When given one or more technologies/libraries to look up:
 
 ### Step 1: Context7 MCP (Primary)
 
-Try Context7 first for all technologies:
+You have access to two Context7 MCP tools:
+
+1. `mcp__context7__resolve-library-id` - Resolves library names to Context7 IDs
+   - Input: libraryName (e.g., "express", "react", "typescript")
+   - Input: query (the user's original question for ranking results)
+   - Output: List of matching libraries with IDs like "/org/project"
+
+2. `mcp__context7__query-docs` - Queries documentation for a library
+   - Input: libraryId (from resolve-library-id, format: "/org/project")
+   - Input: query (specific question about the library)
+   - Output: Documentation content, code examples, API references
+
+#### Process for Each Library
 
 ```
-Use MCPSearch to query Context7 for each library/framework
-Examples: "react hooks", "typescript utility types", "aws cdk constructs"
+1. Call mcp__context7__resolve-library-id with the library name
+2. Select the best matching library ID from results
+3. Call mcp__context7__query-docs with that library ID and the user's question
+4. Return the documentation
+```
+
+#### Parallel Lookups
+
+When multiple libraries are requested, run ALL resolve-library-id calls in parallel, then ALL query-docs calls in parallel:
+
+```
+User asks: "Get docs for React, TypeScript, and Express"
+
+Parallel batch 1:
+- resolve-library-id("react", query)
+- resolve-library-id("typescript", query)
+- resolve-library-id("express", query)
+
+Parallel batch 2:
+- query-docs("/facebook/react", query)
+- query-docs("/microsoft/typescript", query)
+- query-docs("/expressjs/express", query)
 ```
 
 ### Step 2: Official Documentation Sites (Secondary)
