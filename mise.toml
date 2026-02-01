@@ -1,0 +1,21 @@
+[env]
+_.file = ".env"
+
+[tasks."symlink-dotclaude-to-user"]
+description = "Symlink the relevant files from .dotclaude to ~/.claude"
+run = """
+[ -L ~/.claude/settings.json ] || ln -s $(pwd)/.dotclaude/settings.json ~/.claude/settings.json;
+[ -L ~/.claude/CLAUDE.md ] || ln -s $(pwd)/.dotclaude/CLAUDE.md ~/.claude/CLAUDE.md;
+[ -L ~/.claude/rules ] || ln -s $(pwd)/.dotclaude/rules ~/.claude/rules;
+[ -L ~/.claude/agents ] || ln -s $(pwd)/.dotclaude/rules ~/.claude/agents;
+"""
+
+[tasks."add-mcp-servers-to-user"]
+description = "Adds MCP servers to user"
+run = """
+if [ -z "${CONTEXT7_API_KEY}" ]; then
+    echo "error: CONTEXT7_API_KEY environment variable is not set"
+    exit 1
+fi
+claude mcp add --header "CONTEXT7_API_KEY: ${CONTEXT7_API_KEY}" -s user --transport http context7 https://mcp.context7.com/mcp
+"""

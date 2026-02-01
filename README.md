@@ -42,11 +42,7 @@ echo '.claude' >> /path/to/your-project/.gitignore
 Symlink the `CLAUDE.md` and `rules` into your existing `~/.claude` directory:
 
 ```sh
-# The below is assuming you are in the dotclaude repo dir
-ln -s $(pwd)/.dotclaude/settings.json ~/.claude/settings.json
-ln -s $(pwd)/.dotclaude/CLAUDE.md ~/.claude/CLAUDE.md
-ln -s $(pwd)/.dotclaude/rules ~/.claude/rules
-ln -s $(pwd)/.dotclaude/agents ~/.claude/agents
+mise run symlink-dotclaude-to-user
 ```
 
 > [!WARNING]
@@ -55,7 +51,7 @@ ln -s $(pwd)/.dotclaude/agents ~/.claude/agents
 ### Add MCP servers
 
 ```sh
-claude mcp add context7 -- npx -y @upstash/context7-mcp --api-key $(pass show personal/context7/api-key)
+mise run add-mcp-servers-to-user
 ```
 
 ## How to use it after setup
