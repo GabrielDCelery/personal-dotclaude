@@ -18,9 +18,5 @@
     "DISABLE_TELEMETRY": "1",
     "DISABLE_ERROR_REPORTING": "1"
   },
-  "statusLine": {
-    "type": "command",
-    "command": "/home/gaze/.claude/statusline.sh"
-  },
   "companyAnnouncements": ["Wakey wakey, eggs and bakey"]
 }
