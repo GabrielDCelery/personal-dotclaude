@@ -1,86 +1,113 @@
-# What is this repo for?
+# personal-dotclaude
 
-Shared Claude Code configuration for my personal repositories. Provides default project context and rules for common tasks like README generation. Designed to be used by developers locally or agents running on remote machines.
+Shared Claude Code configuration for personal repositories. Provides default project context, custom agents, and standardized rules for common tasks like README generation.
 
 > [!NOTE]
-> Intentionally separated from my [dotfiles](https://github.com/GabrielDCelery/personal-dotfiles) and [dev environment setup](https://github.com/GabrielDCelery/personal-dev-environment-quickstart)
+> Intentionally separated from [dotfiles](https://github.com/GabrielDCelery/personal-dotfiles) and [dev environment setup](https://github.com/GabrielDCelery/personal-dev-environment-quickstart)
 
 ![Personal Dotclaude Screenshot](./assets/screenshot-dotclaude-002.jpg)
 
-## What is Included
-
-```
-.dotclaude/
-└── rules/
-    └── readme-styles.md    # README generation guidelines
-```
-
-## Setup
-
-Make sure Claude Code has been installed on your machine [Claude Code Installation](https://code.claude.com/docs/en/setup) and that you have a `~/.claude` directory (Claude should autogenerate it after you log in)
-
-Clone this repo:
+## Quick Start
 
 ```sh
 git clone git@github.com:GabrielDCelery/personal-dotclaude.git
 cd personal-dotclaude
-```
-
-Then choose one of the following options:
-
-### Option A: Per-project setup
-
-Symlink the `.dotclaude` directory into a specific project and add `.claude` to the project's gitignore.
-
-```sh
-ln -s /path/to/the/cloned/dotclaude/.dotclaude /path/to/your-project/.claude
-echo '.claude' >> /path/to/your-project/.gitignore
-```
-
-### Option B: User-wide setup
-
-Symlink the `CLAUDE.md` and `rules` into your existing `~/.claude` directory:
-
-```sh
 mise run symlink-dotclaude-to-user
-```
-
-> [!WARNING]
-> Don't symlink the entire `.dotclaude` directory to home as `~/.claude` - the home directory contains Claude Code's data files (cache, history, settings, etc.).
-
-### Add MCP servers
-
-```sh
 mise run add-mcp-servers-to-user
 ```
 
-## How to use it after setup
+## Architecture
 
-Just start claude code
+- **Type**: Configuration repository
+- **Task Runner**: mise
+- **MCP Servers**: Context7 (documentation lookup)
+- **Custom Agents**: DocsExplorer, Context7DocsExplorer
+- **Custom Rules**: README generation guidelines
+
+## What's Included
+
+```
+.dotclaude/
+├── CLAUDE.md                        # Default project context
+├── settings.json                    # Claude Code settings
+├── agents/
+│   ├── DocsExplorer.md             # Documentation lookup (Context7 + web)
+│   └── Context7DocsExplorer.md     # Documentation lookup (Context7 only)
+└── rules/
+    └── readme-styles.md            # README generation guidelines
+```
+
+## Configuration
+
+| Variable | Description | Required | Default |
+| -------- | ----------- | -------- | ------- |
+| CONTEXT7_API_KEY | API key for Context7 MCP server | Yes | None |
+
+Secrets are stored in `.env` locally.
+
+## Setup
+
+Prerequisites: [Claude Code](https://code.claude.com/docs/en/setup) installed with `~/.claude` directory initialized.
+
+### Option A: User-wide setup (recommended)
+
+Symlinks configuration to `~/.claude` for all projects:
+
+```sh
+mise run symlink-dotclaude-to-user
+mise run add-mcp-servers-to-user
+```
+
+> [!WARNING]
+> Don't symlink the entire `.dotclaude` directory to `~/.claude` - the home directory contains Claude Code's data files.
+
+### Option B: Per-project setup
+
+Symlinks configuration to a specific project:
+
+```sh
+ln -s /path/to/personal-dotclaude/.dotclaude /path/to/your-project/.claude
+echo '.claude' >> /path/to/your-project/.gitignore
+```
+
+## Usage
+
+Start Claude Code and reference the custom rules:
 
 ```sh
 claude
 ```
 
-Then ask it to help you write the README
+Example prompts:
 
-```claude
-Hi can you help me with adding/updating the README according to our standards?
+```
+Can you help me with the README according to our standards?
+Get docs for React and TypeScript
 ```
 
 ## Adding Project-Specific Context
 
-If a project needs additional context, create a `CLAUDE.md` at the project root. Claude Code reads both files and combines them.
+Create a `CLAUDE.md` at the project root for additional context:
 
 ```
 your-project/
 ├── CLAUDE.md          # Project-specific context
-├── .claude -> ...     # Symlinked from .personal-claude
+├── .claude -> ...     # Symlinked from personal-dotclaude
 └── src/
 ```
 
-> [!NOTE]
-> Why `.dotclaude` and not `.claude`? Because the default dotfiles dir is .claude and wanted to make sure there are no accidental naming conflict shenanigans
+Claude Code merges both the global and project-specific context.
+
+## Updates
+
+```sh
+cd personal-dotclaude
+git pull
+```
+
+Symlinks pick up changes automatically.
+
+---
 
 > [!NOTE]
-> To update, run `git pull` in this directory. Symlinks pick up changes automatically.
+> Why `.dotclaude` instead of `.claude`? To avoid naming conflicts with Claude Code's default directory.
