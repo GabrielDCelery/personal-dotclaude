@@ -2,6 +2,9 @@
 
 Shared Claude Code configuration for all company repositories. Provides default project context and rules for common tasks like README generation. Designed to be used by developers locally or agents running on remote machines.
 
+> [!NOTE]
+> Intentionally separated from my [dotfiles](https://github.com/GabrielDCelery/personal-dotfiles) and [dev environment setup](https://github.com/GabrielDCelery/personal-dev-environment-quickstart)
+
 ![Personal Dotclaude Screenshot](./assets/screenshot-dotclaude-002.jpg)
 
 ## What is Included
