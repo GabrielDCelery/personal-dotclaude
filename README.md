@@ -2,7 +2,7 @@
 
 Shared Claude Code configuration for all company repositories. Provides default project context and rules for common tasks like README generation. Designed to be used by developers locally or agents running on remote machines.
 
-![Personal Dotclaude Screenshot](./assets/screenshot-dotclaude-001.jpg)
+![Personal Dotclaude Screenshot](./assets/screenshot-dotclaude-002.jpg)
 
 ## What is Included
 
