@@ -10,25 +10,34 @@
       "mcp__context7__query-docs"
     ],
     "deny": [
-      "Read(./.env)",
-      "Read(./.env.*)",
-      "Read(./secrets/**)",
-      "Read(./config/credentials.json)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/secrets/**)",
+      "Read(**/config/credentials.json)",
       "Read(**/*.key)",
       "Read(**/*.pem)",
       "Read(**/*.p12)",
       "Read(**/*credential*)",
-      "Bash(rm -rf:*)"
+      "Bash(rm -rf*)",
+      "Bash(git push *)",
+      "Bash(**/.ssh*)",
+      "Bash(*ssh*)",
+      "Glob(**/.ssh/**)",
+      "Read(**/.ssh/**)",
+      "Edit(**/.ssh/**)",
+      "Write(**/.ssh/**)"
     ]
   },
   "env": {
     "DISABLE_TELEMETRY": "1",
-    "DISABLE_ERROR_REPORTING": "1"
+    "DISABLE_ERROR_REPORTING": "1",
+    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
   },
   "companyAnnouncements": ["Wakey wakey, eggs and bakey"],
   "statusLine": {
     "type": "command",
     "command": "bunx -y ccstatusline@latest",
     "padding": 0
-  }
+  },
+  "cleanupPeriodDays": 30
 }
