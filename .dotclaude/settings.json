@@ -1,6 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "model": "opusplan",
+  "cleanupPeriodDays": 30,
+  "env": {
+    "DISABLE_TELEMETRY": "1",
+    "DISABLE_ERROR_REPORTING": "1",
+    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
+  },
   "permissions": {
     "allow": [
       "WebFetch",
@@ -28,16 +33,11 @@
       "Write(**/.ssh/**)"
     ]
   },
-  "env": {
-    "DISABLE_TELEMETRY": "1",
-    "DISABLE_ERROR_REPORTING": "1",
-    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
-  },
-  "companyAnnouncements": ["Wakey wakey, eggs and bakey"],
+  "model": "opusplan",
   "statusLine": {
     "type": "command",
     "command": "bunx -y ccstatusline@latest",
     "padding": 0
   },
-  "cleanupPeriodDays": 30
+  "companyAnnouncements": ["Wakey wakey, eggs and bakey"]
 }
