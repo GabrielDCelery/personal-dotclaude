@@ -50,7 +50,7 @@ For each concept:
 2. **ASCII visualization** — show magnitude, not just categories. A reader should be able to _see_ the difference between options.
 3. **Table** — the lookup reference, for when you already understand the model and need the number.
 
-Never lead with a table and no prose. Never use a table where an ASCII chart would show the difference more viscerally.
+Never lead with a table and no prose — every table needs at least one framing sentence before it. Never use a table where an ASCII chart would show the difference more viscerally.
 
 ### 4. End with Key Mental Models
 
@@ -102,9 +102,11 @@ Remove scaffolding noise and tighten content without changing the structure. The
 ### What to do
 
 - **Strip unfilled placeholders** — remove rows, cells, or bullet points that still contain template text (`[TBD]`, `[Inferred from...]`, `[e.g. ...]`, `[Domain-specific question]`). If a section is entirely unfilled, remove the section heading too.
+- **Keep section-opening prose** — a sentence or two that frames what a section is for and why it matters must be kept. This is not filler — it gives context that the list items alone do not. Tighten if verbose, but do not cut.
 - **Tighten prose descriptions** — shorten field descriptions, decision rationale, and inline notes. Cut filler words. Keep the meaning.
 - **Consolidate thin sections** — if a section has only one item and no real content, fold it into a neighbouring section or remove it.
-- **Keep all table structure** — do not flatten tables into prose. Do not add prose where the original had a table.
+- **Keep all table structure** — do not flatten tables into prose.
+- **Every table needs at least one framing sentence** — if the original has one, keep it (tighten if verbose). If the original has none and the table's purpose isn't obvious from the heading alone, add one sentence. Never more than one — the table speaks for itself after that.
 - **Keep decision reasoning** — for decisions logs, the "why" and "alternatives considered" are the value. Tighten the wording but do not cut the reasoning.
 - **Do not add** a "Key Mental Models" section or an anchor model frame — these belong to narrative docs only.
 
