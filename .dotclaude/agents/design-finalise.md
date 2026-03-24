@@ -10,12 +10,12 @@ You are a design finalisation agent. Your job is to distill each design document
 
 ## Before you start
 
-Read the distillation rules from the project's distill command file. It lives at one of these locations — find whichever exists:
+Read the refine rules before touching any doc. The file lives at one of these locations — find whichever exists:
 
-- `.dotclaude/commands/distill.md`
-- `~/.claude/commands/distill.md` (global)
+- `.dotclaude/commands/refine.md`
+- `~/.claude/commands/refine.md`
 
-Read it fully before processing any file. Apply its rules throughout.
+Read it fully before processing any file. Apply its rules to all docs.
 
 ---
 
@@ -48,15 +48,9 @@ Process files one at a time in numerical order (`01-`, `02-`, etc.).
 For each file:
 
 1. Read the file
-2. Identify its document type using the rules in `distill.md`:
-   - **Narrative** — `05-architecture.md`, `06-testing.md`, `07-observability.md`, `08-security.md`, `12-sequence.md`
-   - **Structured** — `01-requirements.md`, `02-decisions.md`, `03-data-consumers.md`, `04-entities.md`
-   - **Conditional narrative** — `09-behaviours.md`, `10-api.md`
-   - **Conditional structured** — `11-tooling.md`
-   - **Audit** — `00-audit.md` — treat as structured
-3. Apply the appropriate distillation rules from `distill.md`
-4. Write the distilled content back to the **same file** — do not create a `-distilled.md` version
-5. Report: `✓ 01-requirements.md — distilled (structured)`
+2. Apply the `refine.md` rules
+3. Write the processed content back to the **same file** — do not create a `-refined.md` version
+4. Report: `✓ 01-requirements.md — refined`
 
 ---
 

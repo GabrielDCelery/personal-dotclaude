@@ -10,17 +10,9 @@ Takes a verbose note and rewrites it as a distilled mental model reference. Read
 
 Example: `/distill 05-queues-and-async.md` → writes `05-queues-and-async-distilled.md`
 
-## Document types
+## What this is for
 
-Identify which type the source document is before applying any rules. Different types get different treatment.
-
-**Narrative / learning notes** — prose-heavy, explains concepts, builds intuition. Apply the full rules below (anchor model, prose → visual → table, Key Mental Models).
-
-**Structured reference docs** — tables, lists, decision logs, entity definitions, requirements. Apply the structured rules section instead. Do not convert tables into prose or force a "Key Mental Models" section onto a reference document.
-
-**Mixed docs** — contains both prose sections and structured sections (e.g. a doc with an explanation followed by a decisions table, or prose with embedded code blocks). Apply narrative rules to prose sections and structured rules to table/code sections independently. Do not flatten one into the other.
-
-When in doubt: if the document's primary value is lookup and reference, treat it as structured. If its primary value is understanding and intuition, treat it as narrative.
+Narrative and learning notes — prose-heavy content that explains concepts, builds intuition, and teaches mental models. If the document is a structured reference (requirements list, decisions log, entity definitions, API endpoints), use `/refine` instead.
 
 ---
 
@@ -73,6 +65,7 @@ A numbered cheat sheet — one line per model. These should be the things a read
 - **Duplicate coverage** — if a concept is explained well in another note in the series, one line and a reference is enough.
 - **Redundant tables** — if an ASCII chart already shows the comparison visually, a table of the same data is noise unless it adds precision the chart can't.
 - **Do not cut clean sentences** — only shorten where there is genuine bloat. If a sentence reads well and flows naturally, leave it. Over-compression kills readability and turns a document into a checklist.
+- **Preserve original structure** — if the source uses bullet points, keep bullet points. If it uses a table, keep a table. Do not convert lists to tables or tables to lists.
 
 ## ASCII visualization guidelines
 
@@ -90,42 +83,8 @@ A numbered cheat sheet — one line per model. These should be the things a read
 - Target 150–250 lines. Long enough to flow, short enough to read in one sitting.
 - Keep the "Key Mental Models" section at the end — numbered, one line each.
 
----
-
-## Structured reference docs
-
-Apply these rules instead of the narrative rules when the document is a reference structure (decisions log, entity definitions, requirements list, data consumers, API endpoints, etc.).
-
-### Goal
-
-Remove scaffolding noise and tighten content without changing the structure. The output should be the same shape as the input — tables stay tables, lists stay lists — but cleaner and denser.
-
-### What to do
-
-- **Strip unfilled placeholders** — remove rows, cells, or bullet points that still contain template text (`[TBD]`, `[Inferred from...]`, `[e.g. ...]`, `[Domain-specific question]`). If a section is entirely unfilled, remove the section heading too.
-- **Keep section-opening prose** — a sentence or two that frames what a section is for and why it matters must be kept. This is not filler — it gives context that the list items alone do not. Tighten if verbose, but do not cut.
-- **Tighten prose descriptions** — shorten field descriptions, decision rationale, and inline notes. Cut filler words. Keep the meaning.
-- **Consolidate thin sections** — if a section has only one item and no real content, fold it into a neighbouring section or remove it.
-- **Preserve original structure** — if the source uses bullet points, keep bullet points. If it uses a table, keep a table. Do not convert lists to tables or tables to lists. Structure is part of the document's voice — changing it is not distillation.
-- **Keep all table structure** — do not flatten tables into prose.
-- **Every table needs at least one framing sentence** — if the original has one, keep it (tighten if verbose). If the original has none and the table's purpose isn't obvious from the heading alone, add one sentence. Never more than one — the table speaks for itself after that.
-- **Shorten only where there is genuine bloat** — repeated words, filler phrases, restated context. If a sentence already reads cleanly and flows well, leave it alone. Do not compress for the sake of it — density is not the goal, clarity is. A checklist is not a distilled doc.
-- **Keep decision reasoning** — for decisions logs, the "why" and "alternatives considered" are the value. Tighten the wording but do not cut the reasoning.
-- **Do not add** a "Key Mental Models" section or an anchor model frame — these belong to narrative docs only.
-
-### What to cut
-
-- Template instructions left in the document (meta-comments addressed to the author)
-- Duplicate information across sections
-- Section headings with no content under them
-- Rows in tables where every cell is empty or placeholder
-
----
-
 ## Code blocks
 
-Code blocks appear in both narrative and structured docs. In both cases:
-
 - **Keep code blocks as-is** — do not rewrite, summarise, or convert to prose. Code is already dense.
-- **Tighten the prose around the code block** — the explanation before/after should be shorter than the block itself. If the code is self-explanatory, cut the explanation entirely.
+- **Tighten the prose around the code block** — if the explanation before/after is bloated, trim it. If the code is self-explanatory, cut the explanation entirely.
 - **Do not add code blocks that weren't in the original** — distillation is not augmentation.
