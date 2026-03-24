@@ -11,6 +11,7 @@ You are a greenfield design documentation agent. Your job is to generate a struc
 ## Input
 
 The user will provide either:
+
 - An inline description of the project
 - A file path (e.g. `docs/brief.md`) — if so, read the file and use its contents as the project description
 
@@ -349,8 +350,8 @@ Strategy for understanding system health and diagnosing problems in production. 
 
 [Infer key signals from the description — throughput, latency, error rate, queue depth, cache hit rate, etc.]
 
-| Metric | Why it matters |
-| ------ | -------------- |
+| Metric                              | Why it matters               |
+| ----------------------------------- | ---------------------------- |
 | [e.g. order processing latency p99] | [e.g. SLA / user experience] |
 
 ### Tradeoffs
@@ -366,10 +367,10 @@ Strategy for understanding system health and diagnosing problems in production. 
 
 [Infer from the domain — what failure would you need to know about immediately vs. next morning?]
 
-| Condition | Severity | Why |
-| --------- | -------- | --- |
-| [e.g. error rate > 1% over 5m] | Page | |
-| [e.g. queue depth > 1000] | Warn | |
+| Condition                      | Severity | Why |
+| ------------------------------ | -------- | --- |
+| [e.g. error rate > 1% over 5m] | Page     |     |
+| [e.g. queue depth > 1000]      | Warn     |     |
 
 ### Tradeoffs
 
@@ -404,10 +405,10 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 
 [Infer from the description — who might attack this system and what would they want?]
 
-| Threat | Likelihood | Impact | Mitigation |
-| ------ | ---------- | ------ | ---------- |
-| [e.g. account takeover] | | | |
-| [e.g. data exfiltration] | | | |
+| Threat                   | Likelihood | Impact | Mitigation |
+| ------------------------ | ---------- | ------ | ---------- |
+| [e.g. account takeover]  |            |        |            |
+| [e.g. data exfiltration] |            |        |            |
 
 ---
 
@@ -415,10 +416,10 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 
 [What data does this system hold? Classify by sensitivity]
 
-| Data | Sensitivity | Why |
-| ---- | ----------- | --- |
-| [e.g. user email] | PII | |
-| [e.g. order history] | Confidential | |
+| Data                 | Sensitivity  | Why |
+| -------------------- | ------------ | --- |
+| [e.g. user email]    | PII          |     |
+| [e.g. order history] | Confidential |     |
 
 ---
 
@@ -429,10 +430,12 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 **Strategy:** [e.g. minimise collection, mask in logs, encrypt at rest]
 
 **Tradeoffs:**
+
 - Encryption at rest protects against DB compromise but adds key management complexity
 - Masking in logs reduces risk but makes debugging harder
 
 **Open Questions:**
+
 - [Domain-specific: e.g. GDPR right to erasure — can we delete a user without corrupting order history?]
 
 ---
@@ -448,6 +451,7 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 **Decision:** TBD
 
 **Tradeoffs:**
+
 - DB-level encryption (e.g. RDS encryption): simple, transparent, protects against disk theft — does not protect against a compromised DB user
 - Application-level encryption: stronger guarantees, but you own key management and cannot query encrypted fields
 
@@ -458,6 +462,7 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 **Decision:** TBD
 
 **Options:**
+
 - Environment variables: simple, widely supported — secrets visible in process list and logs if not careful
 - SSM Parameter Store / Secrets Manager: auditable, rotatable, no secrets in code — adds runtime dependency
 - Vault: powerful, complex — warranted for large teams or many services
