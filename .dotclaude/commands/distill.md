@@ -72,6 +72,7 @@ A numbered cheat sheet — one line per model. These should be the things a read
 - **Proofs without payoff** — derivations where the conclusion is already stated clearly elsewhere. Cut the proof, keep the conclusion _and_ the one-sentence intuition for why it's true.
 - **Duplicate coverage** — if a concept is explained well in another note in the series, one line and a reference is enough.
 - **Redundant tables** — if an ASCII chart already shows the comparison visually, a table of the same data is noise unless it adds precision the chart can't.
+- **Do not cut clean sentences** — only shorten where there is genuine bloat. If a sentence reads well and flows naturally, leave it. Over-compression kills readability and turns a document into a checklist.
 
 ## ASCII visualization guidelines
 
@@ -105,8 +106,10 @@ Remove scaffolding noise and tighten content without changing the structure. The
 - **Keep section-opening prose** — a sentence or two that frames what a section is for and why it matters must be kept. This is not filler — it gives context that the list items alone do not. Tighten if verbose, but do not cut.
 - **Tighten prose descriptions** — shorten field descriptions, decision rationale, and inline notes. Cut filler words. Keep the meaning.
 - **Consolidate thin sections** — if a section has only one item and no real content, fold it into a neighbouring section or remove it.
+- **Preserve original structure** — if the source uses bullet points, keep bullet points. If it uses a table, keep a table. Do not convert lists to tables or tables to lists. Structure is part of the document's voice — changing it is not distillation.
 - **Keep all table structure** — do not flatten tables into prose.
 - **Every table needs at least one framing sentence** — if the original has one, keep it (tighten if verbose). If the original has none and the table's purpose isn't obvious from the heading alone, add one sentence. Never more than one — the table speaks for itself after that.
+- **Shorten only where there is genuine bloat** — repeated words, filler phrases, restated context. If a sentence already reads cleanly and flows well, leave it alone. Do not compress for the sake of it — density is not the goal, clarity is. A checklist is not a distilled doc.
 - **Keep decision reasoning** — for decisions logs, the "why" and "alternatives considered" are the value. Tighten the wording but do not cut the reasoning.
 - **Do not add** a "Key Mental Models" section or an anchor model frame — these belong to narrative docs only.
 
