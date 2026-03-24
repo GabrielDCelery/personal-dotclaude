@@ -34,13 +34,13 @@ If the argument is a file path (e.g. ends in `.md` or points to an existing file
 - `docs/06-testing.md` — what to test, testing strategy, and key scenarios
 - `docs/07-observability.md` — logging, metrics, alerting, and tracing strategy
 - `docs/08-security.md` — security concerns, PII, encryption, compliance boundaries
+- `docs/12-sequence.md` — walking skeleton, development slices, and sequencing reasoning
 
 ### Created only if relevant to the description
 
 - `docs/09-behaviours.md` — if the system has multiple actors with distinct roles or entities with lifecycle states
 - `docs/10-api.md` — if the system exposes an API
 - `docs/11-tooling.md` — if the description specifies a language, framework, or database
-- `docs/12-sequence.md` — how to split the project into development slices and where to start
 
 ## Process
 
@@ -48,14 +48,14 @@ Read the project description carefully. Use it to:
 
 - Infer the likely **actors** (who uses the system and in what role)
 - Infer the likely **entities** (what things exist in the system)
-- Infer whether entities have **lifecycle states** or multiple actors with distinct roles (if so, create `07-behaviours.md`)
+- Infer whether entities have **lifecycle states** or multiple actors with distinct roles (if so, create `09-behaviours.md`)
 - Identify **domain-specific concerns** to surface as guiding questions (e.g. compliance for finance, latency for trading, consistency for payments)
 
 Then generate each file as follows.
 
 ---
 
-### `docs/requirements.md`
+### `docs/01-requirements.md`
 
 ```markdown
 # Requirements
@@ -106,7 +106,7 @@ Then generate each file as follows.
 
 ---
 
-### `docs/decisions.md`
+### `docs/02-decisions.md`
 
 ```markdown
 # Design Decisions
@@ -170,7 +170,7 @@ Who needs what view of the data and why. This drives entity design and query str
 ```markdown
 # Entities
 
-Entity definitions, fields, and relationships. This is the intermediate step between requirements and schema — reason through what needs to exist and why before committing to SQL.
+Entity definitions, fields, and relationships. This is the intermediate step between requirements and schema — reason through what needs to exist and why before committing to a data model.
 
 ## [Entity — inferred from description]
 
@@ -236,7 +236,7 @@ Infrastructure-level decisions — separate from domain/workflow decisions in `0
 
 ### Known Hotspots
 
-[Infer from entities and behaviours — what operations touch many rows or many connections at once?]
+[Infer from entities and actors — what operations touch many rows or many connections at once?]
 
 - [e.g. cascade on state change, fan-out on event]
 
@@ -608,10 +608,10 @@ Append to the existing `CLAUDE.md` (or create if missing):
 - `docs/06-testing.md` — what to test, testing strategy, and key scenarios
 - `docs/07-observability.md` — logging, metrics, alerting, and tracing strategy
 - `docs/08-security.md` — security concerns, PII, encryption, compliance boundaries
+- `docs/12-sequence.md` — walking skeleton, development slices, and sequencing reasoning
 - `docs/09-behaviours.md` — actors, actions, and state transitions (if applicable)
 - `docs/10-api.md` — prioritised endpoints and contracts (if applicable)
 - `docs/11-tooling.md` — recommended packages and tools by concern with benefits and tradeoffs (if applicable)
-- `docs/12-sequence.md` — walking skeleton, development slices, and sequencing reasoning
 ```
 
 ## Rules
