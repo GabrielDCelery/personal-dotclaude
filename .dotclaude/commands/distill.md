@@ -10,6 +10,20 @@ Takes a verbose note and rewrites it as a distilled mental model reference. Read
 
 Example: `/distill 05-queues-and-async.md` → writes `05-queues-and-async-distilled.md`
 
+## Document types
+
+Identify which type the source document is before applying any rules. Different types get different treatment.
+
+**Narrative / learning notes** — prose-heavy, explains concepts, builds intuition. Apply the full rules below (anchor model, prose → visual → table, Key Mental Models).
+
+**Structured reference docs** — tables, lists, decision logs, entity definitions, requirements. Apply the structured rules section instead. Do not convert tables into prose or force a "Key Mental Models" section onto a reference document.
+
+**Mixed docs** — contains both prose sections and structured sections (e.g. a doc with an explanation followed by a decisions table, or prose with embedded code blocks). Apply narrative rules to prose sections and structured rules to table/code sections independently. Do not flatten one into the other.
+
+When in doubt: if the document's primary value is lookup and reference, treat it as structured. If its primary value is understanding and intuition, treat it as narrative.
+
+---
+
 ## The goal
 
 The output should feel like a well-written chapter, not a bullet dump. A reader should be able to work through it top to bottom and come away with a mental model — not just a set of facts to memorise. Flow matters. Prose earns its place by building intuition; tables and charts are the reference anchors that follow.
@@ -74,3 +88,39 @@ A numbered cheat sheet — one line per model. These should be the things a read
 - **Bold the default choice** or the single most important rule in each section.
 - Target 150–250 lines. Long enough to flow, short enough to read in one sitting.
 - Keep the "Key Mental Models" section at the end — numbered, one line each.
+
+---
+
+## Structured reference docs
+
+Apply these rules instead of the narrative rules when the document is a reference structure (decisions log, entity definitions, requirements list, data consumers, API endpoints, etc.).
+
+### Goal
+
+Remove scaffolding noise and tighten content without changing the structure. The output should be the same shape as the input — tables stay tables, lists stay lists — but cleaner and denser.
+
+### What to do
+
+- **Strip unfilled placeholders** — remove rows, cells, or bullet points that still contain template text (`[TBD]`, `[Inferred from...]`, `[e.g. ...]`, `[Domain-specific question]`). If a section is entirely unfilled, remove the section heading too.
+- **Tighten prose descriptions** — shorten field descriptions, decision rationale, and inline notes. Cut filler words. Keep the meaning.
+- **Consolidate thin sections** — if a section has only one item and no real content, fold it into a neighbouring section or remove it.
+- **Keep all table structure** — do not flatten tables into prose. Do not add prose where the original had a table.
+- **Keep decision reasoning** — for decisions logs, the "why" and "alternatives considered" are the value. Tighten the wording but do not cut the reasoning.
+- **Do not add** a "Key Mental Models" section or an anchor model frame — these belong to narrative docs only.
+
+### What to cut
+
+- Template instructions left in the document (meta-comments addressed to the author)
+- Duplicate information across sections
+- Section headings with no content under them
+- Rows in tables where every cell is empty or placeholder
+
+---
+
+## Code blocks
+
+Code blocks appear in both narrative and structured docs. In both cases:
+
+- **Keep code blocks as-is** — do not rewrite, summarise, or convert to prose. Code is already dense.
+- **Tighten the prose around the code block** — the explanation before/after should be shorter than the block itself. If the code is self-explanatory, cut the explanation entirely.
+- **Do not add code blocks that weren't in the original** — distillation is not augmentation.
