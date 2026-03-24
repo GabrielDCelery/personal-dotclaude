@@ -37,13 +37,13 @@ If the description is too vague to infer actors or entities, ask one clarifying 
 - `docs/07-observability.md` — logging, metrics, alerting, and tracing strategy
 - `docs/08-security.md` — security concerns, PII, encryption, compliance boundaries
 - `docs/09-deployment.md` — deployment strategy, environments, migrations, infrastructure provisioning
-- `docs/13-sequence.md` — walking skeleton, development slices, and sequencing reasoning
+- `docs/10-sequence.md` — walking skeleton, development slices, and sequencing reasoning
 
 ### Created only if relevant to the description
 
-- `docs/10-behaviours.md` — if the system has multiple actors with distinct roles or entities with lifecycle states
-- `docs/11-api.md` — if the system exposes an API
-- `docs/12-tooling.md` — if the description specifies a language, framework, or database
+- `docs/11-behaviours.md` — if the system has multiple actors with distinct roles or entities with lifecycle states
+- `docs/12-api.md` — if the system exposes an API
+- `docs/13-tooling.md` — if the description specifies a language, framework, or database
 
 ## Process
 
@@ -682,7 +682,7 @@ How this system gets built, shipped, and operated. Informed by the scale and inf
 
 ---
 
-### `docs/10-behaviours.md` (if applicable)
+### `docs/11-behaviours.md` (if applicable)
 
 ```markdown
 # Behaviours
@@ -713,7 +713,7 @@ Any transition not listed above is invalid and must be rejected by the system.
 
 ---
 
-### `docs/11-api.md` (if applicable)
+### `docs/12-api.md` (if applicable)
 
 ```markdown
 # API
@@ -735,7 +735,7 @@ Prioritised endpoints — most critical to least. Contracts to be expanded.
 
 ---
 
-### `docs/12-tooling.md` (if applicable)
+### `docs/13-tooling.md` (if applicable)
 
 ```markdown
 # Tooling
@@ -761,7 +761,7 @@ Only include concerns that are relevant to the described stack. Infer categories
 
 ---
 
-### `docs/13-sequence.md`
+### `docs/10-sequence.md`
 
 ```markdown
 # Development Sequence
@@ -821,10 +821,10 @@ Append to the existing `CLAUDE.md` (or create if missing):
 - `docs/07-observability.md` — logging, metrics, alerting, and tracing strategy
 - `docs/08-security.md` — security concerns, PII, encryption, compliance boundaries
 - `docs/09-deployment.md` — deployment strategy, environments, migrations, infrastructure provisioning
-- `docs/13-sequence.md` — walking skeleton, development slices, and sequencing reasoning
-- `docs/10-behaviours.md` — actors, actions, and state transitions (if applicable)
-- `docs/11-api.md` — prioritised endpoints and contracts (if applicable)
-- `docs/12-tooling.md` — recommended packages and tools by concern with benefits and tradeoffs (if applicable)
+- `docs/10-sequence.md` — walking skeleton, development slices, and sequencing reasoning
+- `docs/11-behaviours.md` — actors, actions, and state transitions (if applicable)
+- `docs/12-api.md` — prioritised endpoints and contracts (if applicable)
+- `docs/13-tooling.md` — recommended packages and tools by concern with benefits and tradeoffs (if applicable)
 ```
 
 ## Rules

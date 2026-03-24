@@ -84,13 +84,13 @@ Generate files in this order: `00-audit.md` first (summary of everything), then 
 - `docs/07-observability.md` — logging, metrics, alerting as found or absent
 - `docs/08-security.md` — security posture as found, gaps flagged
 - `docs/09-deployment.md` — deployment strategy, environments, migrations, infrastructure as found
-- `docs/13-sequence.md` — what's built, what's partial, what's missing, recommended next steps
+- `docs/10-sequence.md` — what's built, what's partial, what's missing, recommended next steps
 
 ### Created only if relevant to the codebase
 
-- `docs/10-behaviours.md` — if multiple actors or entities with lifecycle states are found
-- `docs/11-api.md` — if an API is exposed
-- `docs/12-tooling.md` — key libraries and tools in use, with notes on how they're used
+- `docs/11-behaviours.md` — if multiple actors or entities with lifecycle states are found
+- `docs/12-api.md` — if an API is exposed
+- `docs/13-tooling.md` — key libraries and tools in use, with notes on how they're used
 
 ---
 
@@ -676,7 +676,7 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 
 ---
 
-### `docs/10-behaviours.md` (if applicable)
+### `docs/11-behaviours.md` (if applicable)
 
 ```markdown
 # Behaviours
@@ -705,7 +705,7 @@ Inferred from route handlers, state machine logic, and entity status fields.
 
 ---
 
-### `docs/11-api.md` (if applicable)
+### `docs/12-api.md` (if applicable)
 
 ```markdown
 # API
@@ -728,7 +728,7 @@ Endpoints found in the codebase. Inferred from route definitions.
 
 ---
 
-### `docs/12-tooling.md` (if applicable)
+### `docs/13-tooling.md` (if applicable)
 
 ```markdown
 # Tooling
@@ -748,7 +748,7 @@ Libraries and tools found in the codebase, with notes on how they're used.
 
 ---
 
-### `docs/13-sequence.md`
+### `docs/10-sequence.md`
 
 ```markdown
 # Development Sequence
@@ -824,10 +824,10 @@ Design audit completed. Docs generated from codebase discovery — items marked 
 - `docs/07-observability.md` — logging, metrics, alerting as found
 - `docs/08-security.md` — security posture and issues found
 - `docs/09-deployment.md` — deployment strategy, environments, migrations, infrastructure as found
-- `docs/13-sequence.md` — what's built, what's missing, recommended next steps
-- `docs/10-behaviours.md` — actors and state transitions (if applicable)
-- `docs/11-api.md` — API endpoints found (if applicable)
-- `docs/12-tooling.md` — libraries and tools in use (if applicable)
+- `docs/10-sequence.md` — what's built, what's missing, recommended next steps
+- `docs/11-behaviours.md` — actors and state transitions (if applicable)
+- `docs/12-api.md` — API endpoints found (if applicable)
+- `docs/13-tooling.md` — libraries and tools in use (if applicable)
 ```
 
 ## Rules
