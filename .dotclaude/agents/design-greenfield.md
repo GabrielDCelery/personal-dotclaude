@@ -36,13 +36,14 @@ If the description is too vague to infer actors or entities, ask one clarifying 
 - `docs/06-testing.md` — what to test, testing strategy, and key scenarios
 - `docs/07-observability.md` — logging, metrics, alerting, and tracing strategy
 - `docs/08-security.md` — security concerns, PII, encryption, compliance boundaries
-- `docs/12-sequence.md` — walking skeleton, development slices, and sequencing reasoning
+- `docs/09-deployment.md` — deployment strategy, environments, migrations, infrastructure provisioning
+- `docs/13-sequence.md` — walking skeleton, development slices, and sequencing reasoning
 
 ### Created only if relevant to the description
 
-- `docs/09-behaviours.md` — if the system has multiple actors with distinct roles or entities with lifecycle states
-- `docs/10-api.md` — if the system exposes an API
-- `docs/11-tooling.md` — if the description specifies a language, framework, or database
+- `docs/10-behaviours.md` — if the system has multiple actors with distinct roles or entities with lifecycle states
+- `docs/11-api.md` — if the system exposes an API
+- `docs/12-tooling.md` — if the description specifies a language, framework, or database
 
 ## Process
 
@@ -50,7 +51,7 @@ Read the project description carefully. Use it to:
 
 - Infer the likely **actors** (who uses the system and in what role)
 - Infer the likely **entities** (what things exist in the system)
-- Infer whether entities have **lifecycle states** or multiple actors with distinct roles (if so, create `09-behaviours.md`)
+- Infer whether entities have **lifecycle states** or multiple actors with distinct roles (if so, create `10-behaviours.md`)
 - Identify **domain-specific concerns** to surface as guiding questions (e.g. compliance for finance, latency for trading, consistency for payments)
 
 Then generate each file as follows.
@@ -397,7 +398,7 @@ Strategy for understanding system health and diagnosing problems in production. 
 ```markdown
 # Security
 
-Security concerns, strategies, and tradeoffs. No code — this is about what to protect, how, and why.
+Security concerns, strategies, and tradeoffs. No code — this is about what to protect, how, and why. Network access and secrets configuration live in `09-deployment.md`; this doc covers what to protect and why.
 
 ---
 
@@ -405,21 +406,78 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 
 [Infer from the description — who might attack this system and what would they want?]
 
-| Threat                   | Likelihood | Impact | Mitigation |
-| ------------------------ | ---------- | ------ | ---------- |
-| [e.g. account takeover]  |            |        |            |
-| [e.g. data exfiltration] |            |        |            |
+| Threat | Likelihood | Impact | Mitigation |
+| ------ | ---------- | ------ | ---------- |
+| [e.g. account takeover] | | | |
+| [e.g. data exfiltration] | | | |
+
+---
+
+## User-Facing Security
+
+[Only if the system has human users. Skip this section for pure backend services.]
+
+### Authentication
+
+**Decision:** TBD
+
+**Options:**
+- Session-based: server holds state — simple to invalidate, requires sticky sessions or shared store to scale
+- JWT: stateless, scales horizontally — no built-in revocation, stolen token valid until expiry
+- OAuth / SSO: delegate to identity provider — good for enterprise or multi-product, adds external dependency
+
+**Open Questions:**
+- [e.g. Does this need SSO? Will users log in with a social provider or a company identity?]
+
+### Session and Token Security
+
+- Token expiry and refresh strategy: TBD
+- Revocation approach (especially if JWT): TBD
+
+### Common Web Vulnerabilities
+
+[Only flag concerns relevant to this domain — do not list every OWASP item generically]
+
+- [e.g. XSS — if the system renders user-supplied content]
+- [e.g. CSRF — if the system has state-mutating endpoints with cookie auth]
+- [e.g. Mass assignment — if API consumers can supply arbitrary fields]
+
+---
+
+## Service / Backend Security
+
+[Only if the system exposes an API or integrates with external services. Skip for user-only apps with no API.]
+
+### API Authentication
+
+**Decision:** TBD
+
+**Options:**
+- API keys: simple, low overhead — no expiry or rotation by default, hard to scope
+- JWT with service identity: stateless, short-lived — requires issuing infrastructure
+- mTLS: strong mutual auth — complex to set up, warranted for internal service mesh
+
+### Rate Limiting
+
+**Decision:** TBD
+
+**Why it matters:** without rate limiting, a single client can exhaust resources or enumerate data
+
+### Input Validation
+
+- Validate at the boundary — never trust caller-supplied data
+- [Domain-specific: e.g. for a trading system — validate order quantities are positive, prices are non-zero]
 
 ---
 
 ## Data Classification
 
-[What data does this system hold? Classify by sensitivity]
+[What data does this system hold? Classify by sensitivity — infer from entities]
 
-| Data                 | Sensitivity  | Why |
-| -------------------- | ------------ | --- |
-| [e.g. user email]    | PII          |     |
-| [e.g. order history] | Confidential |     |
+| Data | Sensitivity | Notes |
+| ---- | ----------- | ----- |
+| [e.g. user email] | PII | Mask in logs |
+| [e.g. order history] | Confidential | |
 
 ---
 
@@ -430,12 +488,10 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 **Strategy:** [e.g. minimise collection, mask in logs, encrypt at rest]
 
 **Tradeoffs:**
-
 - Encryption at rest protects against DB compromise but adds key management complexity
 - Masking in logs reduces risk but makes debugging harder
 
 **Open Questions:**
-
 - [Domain-specific: e.g. GDPR right to erasure — can we delete a user without corrupting order history?]
 
 ---
@@ -451,7 +507,6 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 **Decision:** TBD
 
 **Tradeoffs:**
-
 - DB-level encryption (e.g. RDS encryption): simple, transparent, protects against disk theft — does not protect against a compromised DB user
 - Application-level encryption: stronger guarantees, but you own key management and cannot query encrypted fields
 
@@ -459,10 +514,11 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 
 ## Secrets Management
 
+The *decision* of how secrets are managed lives here. The *configuration* of secrets per environment lives in `09-deployment.md`.
+
 **Decision:** TBD
 
 **Options:**
-
 - Environment variables: simple, widely supported — secrets visible in process list and logs if not careful
 - SSM Parameter Store / Secrets Manager: auditable, rotatable, no secrets in code — adds runtime dependency
 - Vault: powerful, complex — warranted for large teams or many services
@@ -476,7 +532,157 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 
 ---
 
-### `docs/09-behaviours.md` (if applicable)
+### `docs/09-deployment.md`
+
+```markdown
+# Deployment
+
+How this system gets built, shipped, and operated. Informed by the scale and infrastructure decisions in `05-architecture.md` and the NFRs in `01-requirements.md`. Network access and secrets configuration live here — the *decision* of which secrets approach to use lives in `08-security.md`.
+
+---
+
+## Deployment Target
+
+[Infer from the description and architecture — right-size the recommendation. A solo project does not need Kubernetes. A CLI tool does not need a container registry.]
+
+**Hosting:** TBD
+
+**Options to consider:**
+- Single server / VPS: simple, low cost — right for small internal tools or solo projects
+- Managed container service (ECS, Cloud Run, App Engine): good balance of simplicity and scalability — right for most web services
+- Kubernetes: warranted when you have many services, complex traffic routing, or a large team — overkill for a single service
+- Serverless (Lambda, Cloud Functions): right for event-driven or infrequent workloads — cold starts and payload limits are tradeoffs
+- Static + edge (Vercel, Cloudflare Pages): right for frontend-only or mostly-static systems
+
+**Why this target fits:** TBD
+
+---
+
+## Environments
+
+[Infer from the scale and team size — a solo project may need only local + prod]
+
+| Environment | Purpose | Notable differences from prod |
+| ----------- | ------- | ------------------------------ |
+| local | Development | [e.g. local DB, mocked external services] |
+| staging | Pre-prod validation | [e.g. real infra, anonymised data] |
+| prod | Live | |
+
+**Environment parity concern:** [Flag any gaps between local and prod that are likely to cause bugs — e.g. prod uses managed DB but local uses Docker container]
+
+---
+
+## CI/CD
+
+**Decision:** TBD
+
+**Options:**
+- GitHub Actions: simple, integrated with GitHub, generous free tier
+- CircleCI: good for complex pipelines, faster than Actions for large repos
+- CodePipeline: AWS-native, good if already deep in AWS — more configuration overhead
+- Manual deploy script: acceptable for solo projects or very simple deploys
+
+**Pipeline steps:** [Infer what makes sense — test → build → deploy, or test → build → push image → deploy]
+
+---
+
+## Containerisation
+
+**Decision:** TBD
+
+**If containerised:**
+- Base image choice and why
+- Multi-stage build to keep image size down
+- Environment config via environment variables, not baked into image
+
+**If not containerised:** [Why not — e.g. Lambda function, static site, CLI tool]
+
+---
+
+## Infrastructure Provisioning
+
+[What needs to exist before the app can run — DB, queues, buckets, DNS, secrets. Infer from architecture decisions.]
+
+**Approach:** TBD
+
+**Options:**
+- Terraform: language-agnostic, strong community, good state management
+- CDK: code-first, good for AWS-heavy teams, ties you to AWS
+- Ansible: good for server configuration and provisioning on VMs — less suited to cloud resources
+- Manual / console: acceptable for very small projects, becomes a liability at scale
+- None needed: for simple deploys where the platform handles provisioning (e.g. Vercel, Railway)
+
+**Resources to provision:**
+- [ ] [e.g. PostgreSQL RDS instance]
+- [ ] [e.g. S3 bucket for uploads]
+- [ ] [e.g. SQS queue for async jobs]
+- [ ] [e.g. DNS record]
+
+---
+
+## Data Migrations
+
+[Only if the system has a database with a schema]
+
+**Migration approach:** TBD
+
+**Options:**
+- Run automatically on deploy: simple, risky for large migrations — a bad migration takes down the deploy
+- Run manually before deploy: safer, requires coordination
+- Separate migration job: most flexible — decouple migration from deploy, allows zero-downtime patterns
+
+**Zero-downtime considerations:**
+- Backward-compatible changes (add column, add table) are safe to run before or during deploy
+- Breaking changes (rename column, drop column, change type) require a multi-step migration across deploys
+- [Domain-specific: e.g. for a high-traffic system — how do we handle migrations without a maintenance window?]
+
+**Rollback strategy:** TBD
+
+---
+
+## Network Access
+
+[Who can reach what — infer from the deployment target and whether the system is user-facing or internal]
+
+**Public endpoints:** [What is exposed to the internet]
+**Private endpoints:** [What is internal-only — e.g. DB, admin APIs, internal services]
+**VPN requirement:** [Is any part of this system only accessible via VPN?]
+**Firewall / security groups:** TBD
+
+---
+
+## Secrets and Environment Variables
+
+[Configuration of secrets per environment. The *approach* is decided in `08-security.md` — this section covers what secrets exist and how they are managed per environment.]
+
+| Secret / Env Var | Description | Required | Where it lives |
+| ---------------- | ----------- | -------- | -------------- |
+| [e.g. `DATABASE_URL`] | DB connection string | Yes | [e.g. SSM / .env] |
+| [e.g. `API_KEY`] | External service key | Yes | |
+
+**Rotation policy:** TBD
+
+---
+
+## Health Checks and Readiness
+
+**Health check endpoint:** TBD (e.g. `GET /health`)
+
+**What it checks:** [e.g. DB connectivity, queue reachability]
+
+**Readiness vs liveness:** [Infer if relevant — readiness gates traffic, liveness triggers restarts]
+
+---
+
+## Open Questions
+
+- [Domain-specific deployment concerns — e.g. how do we handle the first deploy with an empty DB? is there seed data?]
+- [e.g. What is the rollback plan if a migration fails in production?]
+```
+
+---
+
+### `docs/10-behaviours.md` (if applicable)
 
 ```markdown
 # Behaviours
@@ -507,7 +713,7 @@ Any transition not listed above is invalid and must be rejected by the system.
 
 ---
 
-### `docs/10-api.md` (if applicable)
+### `docs/11-api.md` (if applicable)
 
 ```markdown
 # API
@@ -529,7 +735,7 @@ Prioritised endpoints — most critical to least. Contracts to be expanded.
 
 ---
 
-### `docs/11-tooling.md` (if applicable)
+### `docs/12-tooling.md` (if applicable)
 
 ```markdown
 # Tooling
@@ -555,7 +761,7 @@ Only include concerns that are relevant to the described stack. Infer categories
 
 ---
 
-### `docs/12-sequence.md`
+### `docs/13-sequence.md`
 
 ```markdown
 # Development Sequence
@@ -614,10 +820,11 @@ Append to the existing `CLAUDE.md` (or create if missing):
 - `docs/06-testing.md` — what to test, testing strategy, and key scenarios
 - `docs/07-observability.md` — logging, metrics, alerting, and tracing strategy
 - `docs/08-security.md` — security concerns, PII, encryption, compliance boundaries
-- `docs/12-sequence.md` — walking skeleton, development slices, and sequencing reasoning
-- `docs/09-behaviours.md` — actors, actions, and state transitions (if applicable)
-- `docs/10-api.md` — prioritised endpoints and contracts (if applicable)
-- `docs/11-tooling.md` — recommended packages and tools by concern with benefits and tradeoffs (if applicable)
+- `docs/09-deployment.md` — deployment strategy, environments, migrations, infrastructure provisioning
+- `docs/13-sequence.md` — walking skeleton, development slices, and sequencing reasoning
+- `docs/10-behaviours.md` — actors, actions, and state transitions (if applicable)
+- `docs/11-api.md` — prioritised endpoints and contracts (if applicable)
+- `docs/12-tooling.md` — recommended packages and tools by concern with benefits and tradeoffs (if applicable)
 ```
 
 ## Rules

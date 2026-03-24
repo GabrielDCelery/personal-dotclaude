@@ -83,13 +83,14 @@ Generate files in this order: `00-audit.md` first (summary of everything), then 
 - `docs/06-testing.md` — what is tested, what isn't, testing approach as found
 - `docs/07-observability.md` — logging, metrics, alerting as found or absent
 - `docs/08-security.md` — security posture as found, gaps flagged
-- `docs/12-sequence.md` — what's built, what's partial, what's missing, recommended next steps
+- `docs/09-deployment.md` — deployment strategy, environments, migrations, infrastructure as found
+- `docs/13-sequence.md` — what's built, what's partial, what's missing, recommended next steps
 
 ### Created only if relevant to the codebase
 
-- `docs/09-behaviours.md` — if multiple actors or entities with lifecycle states are found
-- `docs/10-api.md` — if an API is exposed
-- `docs/11-tooling.md` — key libraries and tools in use, with notes on how they're used
+- `docs/10-behaviours.md` — if multiple actors or entities with lifecycle states are found
+- `docs/11-api.md` — if an API is exposed
+- `docs/12-tooling.md` — key libraries and tools in use, with notes on how they're used
 
 ---
 
@@ -459,7 +460,7 @@ Logging, metrics, and alerting as found in the codebase.
 ```markdown
 # Security
 
-Security posture as found in the codebase. Gaps flagged.
+Security posture as found in the codebase. Gaps flagged. Network access and secrets configuration are covered in `09-deployment.md`.
 
 ---
 
@@ -471,13 +472,53 @@ Security posture as found in the codebase. Gaps flagged.
 
 ---
 
+## User-Facing Security
+
+[Only if the system has human users — skip if pure backend service]
+
+### Authentication
+
+**Approach found:** [Confirmed: e.g. JWT / session / OAuth — source file]
+
+**Token expiry / refresh:** [Confirmed / Not found]
+
+**Revocation strategy:** [Confirmed / Not found — Issue if JWT with no revocation mechanism]
+
+### Common Web Vulnerabilities
+
+| Concern | Status | Notes |
+| ------- | ------ | ----- |
+| XSS | [Confirmed mitigated / Not found] | |
+| CSRF | [Confirmed mitigated / Not found] | |
+| Mass assignment | [Confirmed mitigated / Not found] | |
+
+---
+
+## Service / Backend Security
+
+[Only if the system exposes an API or integrates with external services]
+
+### API Authentication
+
+**Approach found:** [Confirmed / Not found]
+
+### Rate Limiting
+
+**In place:** [Confirmed: source / Not found — Issue if public-facing endpoints have no rate limiting]
+
+### Input Validation
+
+**In place:** [Confirmed: library used / Not found — Issue if no boundary validation]
+
+---
+
 ## Data Classification
 
 [Inferred from entities and field names]
 
-| Data              | Sensitivity | In codebase | Notes                   |
-| ----------------- | ----------- | ----------- | ----------------------- |
-| [e.g. user email] | PII         | Yes         | Confirm masking in logs |
+| Data | Sensitivity | In codebase | Notes |
+| ---- | ----------- | ----------- | ----- |
+| [e.g. user email] | PII | Yes | Confirm masking in logs |
 
 ---
 
@@ -511,10 +552,10 @@ Security posture as found in the codebase. Gaps flagged.
 
 ## Issues Found
 
-| Issue                                     | Location             | Severity |
-| ----------------------------------------- | -------------------- | -------- |
-| [e.g. API key hardcoded]                  | `src/config.ts`      | High     |
-| [e.g. No rate limiting on auth endpoints] | `src/routes/auth.ts` | Medium   |
+| Issue | Location | Severity |
+| ----- | -------- | -------- |
+| [e.g. API key hardcoded] | `src/config.ts` | High |
+| [e.g. No rate limiting on auth endpoints] | `src/routes/auth.ts` | Medium |
 
 ---
 
@@ -525,7 +566,117 @@ Security posture as found in the codebase. Gaps flagged.
 
 ---
 
-### `docs/09-behaviours.md` (if applicable)
+### `docs/09-deployment.md`
+
+```markdown
+# Deployment
+
+Deployment posture as found in the codebase and infrastructure config. Gaps flagged. Network access and secrets configuration are here — the *approach* to secrets is in `08-security.md`.
+
+---
+
+## Deployment Target
+
+**Hosting found:** [Confirmed: e.g. ECS / Lambda / VPS / Unknown — source: Dockerfile / terraform / CI config]
+
+**Containerised:** [Yes — Confirmed: Dockerfile / No / Unknown]
+
+**Right-sized assessment:** [Is the current deployment target appropriate for the described scale? Flag if over- or under-engineered]
+
+---
+
+## Environments
+
+| Environment | Found | Notes |
+| ----------- | ----- | ----- |
+| local | [Confirmed / Not found] | |
+| staging | [Confirmed / Not found] | |
+| prod | [Confirmed / Not found] | |
+
+**Environment parity gaps:** [Any differences between local and prod likely to cause bugs — e.g. local uses SQLite, prod uses PostgreSQL]
+
+---
+
+## CI/CD
+
+**Pipeline found:** [Confirmed: e.g. GitHub Actions — source: .github/workflows / Not found]
+
+**Pipeline steps:** [Confirmed from CI config]
+
+**Deploy trigger:** [Confirmed: e.g. merge to main / manual / Not found]
+
+---
+
+## Infrastructure Provisioning
+
+**IaC found:** [Confirmed: e.g. Terraform / CDK / Ansible / None found]
+
+**Resources provisioned:** [Confirmed from IaC files / Unknown]
+
+**Issue:** [Anything manually provisioned that should be in IaC]
+
+---
+
+## Data Migrations
+
+**Migration tooling found:** [Confirmed: e.g. Flyway / golang-migrate / custom / Not found]
+
+**How migrations run:** [Confirmed: e.g. automatically on deploy / manually / Unknown]
+
+**Zero-downtime approach:** [Confirmed / Not found — Issue if breaking changes deployed without phased migration]
+
+**Rollback strategy:** [Confirmed / Not found]
+
+---
+
+## Network Access
+
+**Public endpoints:** [Confirmed from infra config or CI / Unknown]
+
+**Private endpoints:** [Confirmed / Unknown]
+
+**VPN requirement:** [Confirmed / Not found]
+
+**Security groups / firewall rules:** [Confirmed from IaC / Unknown]
+
+---
+
+## Secrets and Environment Variables
+
+| Secret / Env Var | Found | Where it lives | Issue |
+| ---------------- | ----- | -------------- | ----- |
+| [Confirmed from .env.example / CI config / source] | Yes | [e.g. SSM / .env / hardcoded] | |
+
+**Issue:** [Any hardcoded secrets, missing rotation, or secrets committed to repo]
+
+---
+
+## Health Checks
+
+**Health endpoint found:** [Confirmed: source / Not found]
+
+**What it checks:** [Confirmed / Unknown]
+
+---
+
+## Issues Found
+
+| Issue | Location | Severity |
+| ----- | -------- | -------- |
+| [e.g. No staging environment] | | Medium |
+| [e.g. Secrets in .env committed to repo] | `.env` | High |
+| [e.g. No rollback strategy for migrations] | | Medium |
+
+---
+
+## Open Questions
+
+- [Things that could not be determined — e.g. is there a maintenance window for deployments? who has prod access?]
+```
+
+---
+
+### `docs/10-behaviours.md` (if applicable)
 
 ```markdown
 # Behaviours
@@ -554,7 +705,7 @@ Inferred from route handlers, state machine logic, and entity status fields.
 
 ---
 
-### `docs/10-api.md` (if applicable)
+### `docs/11-api.md` (if applicable)
 
 ```markdown
 # API
@@ -577,7 +728,7 @@ Endpoints found in the codebase. Inferred from route definitions.
 
 ---
 
-### `docs/11-tooling.md` (if applicable)
+### `docs/12-tooling.md` (if applicable)
 
 ```markdown
 # Tooling
@@ -597,7 +748,7 @@ Libraries and tools found in the codebase, with notes on how they're used.
 
 ---
 
-### `docs/12-sequence.md`
+### `docs/13-sequence.md`
 
 ```markdown
 # Development Sequence
@@ -672,10 +823,11 @@ Design audit completed. Docs generated from codebase discovery — items marked 
 - `docs/06-testing.md` — testing approach and coverage gaps
 - `docs/07-observability.md` — logging, metrics, alerting as found
 - `docs/08-security.md` — security posture and issues found
-- `docs/12-sequence.md` — what's built, what's missing, recommended next steps
-- `docs/09-behaviours.md` — actors and state transitions (if applicable)
-- `docs/10-api.md` — API endpoints found (if applicable)
-- `docs/11-tooling.md` — libraries and tools in use (if applicable)
+- `docs/09-deployment.md` — deployment strategy, environments, migrations, infrastructure as found
+- `docs/13-sequence.md` — what's built, what's missing, recommended next steps
+- `docs/10-behaviours.md` — actors and state transitions (if applicable)
+- `docs/11-api.md` — API endpoints found (if applicable)
+- `docs/12-tooling.md` — libraries and tools in use (if applicable)
 ```
 
 ## Rules
