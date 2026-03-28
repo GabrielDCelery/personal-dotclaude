@@ -149,9 +149,8 @@ Tell the user the file that was written. If this was a re-challenge, give a one-
 
 ## Still Open
 
-| Challenge         | First raised                     | What would close it                                         |
-| ----------------- | -------------------------------- | ----------------------------------------------------------- |
-| [Challenge title] | [docs/challenges/<timestamp>.md] | [One sentence — what change to the docs would resolve this] |
+**[Challenge title]** — `docs/challenges/<timestamp>.md`
+[One sentence — what change to the docs would resolve this]
 
 ---
 
