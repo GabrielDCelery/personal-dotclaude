@@ -125,6 +125,18 @@ Attack every relevant area. Do not skip an area just because the docs are thin o
 - Is this under-engineered and will fall over immediately?
 - What did you deliberately leave out and why?
 
+**Domain model correctness**
+
+- Are the core domain rules and metrics actually correct? Attack the definitions, not just the implementation.
+- If the system computes a formula or applies a domain rule, challenge why that formula and not the obvious alternative. Show the edge case where the chosen rule produces a surprising result.
+- What happens to the domain invariants under adversarial or degenerate input — empty keys, zero values, identical datasets, extremely high cardinality?
+
+**Privacy and data boundary guarantees**
+
+- The design claims data never crosses a certain boundary — where exactly is that enforced? Is it structural or just assumed?
+- What happens if a future developer adds a log line or a debug flag? Does the privacy guarantee hold or does it rely on everyone remembering the rule?
+- Is the output truly aggregate-only? Are there edge cases where a small population size makes the aggregate re-identifiable?
+
 **Open questions and TBDs**
 
 - Every unresolved TBD is a liability. Attack each one.
