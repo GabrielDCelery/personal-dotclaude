@@ -28,6 +28,7 @@ If the description is too vague to infer actors or entities, ask one clarifying 
 
 ### Always created
 
+- `docs/00-domain.md` — domain vocabulary, core concepts, and worked examples that make the rest of the docs meaningful
 - `docs/01-requirements.md` — functional requirements, non-functional requirements, open questions
 - `docs/02-decisions.md` — design decisions with reasoning and alternatives
 - `docs/03-data-consumers.md` — who needs what view of the data and why
@@ -49,12 +50,61 @@ If the description is too vague to infer actors or entities, ask one clarifying 
 
 Read the project description carefully. Use it to:
 
+- Infer the **system shape**: web service, CLI/batch tool, library, or data pipeline. This drives which sections are relevant in entities, architecture, and deployment.
 - Infer the likely **actors** (who uses the system and in what role)
 - Infer the likely **entities** (what things exist in the system)
-- Infer whether entities have **lifecycle states** or multiple actors with distinct roles (if so, create `10-behaviours.md`)
+- Infer whether entities have **lifecycle states** or multiple actors with distinct roles (if so, create `11-behaviours.md`)
 - Identify **domain-specific concerns** to surface as guiding questions (e.g. compliance for finance, latency for trading, consistency for payments)
+- Identify any **core domain concepts, formulas, or metrics** that need a worked example to make the rest of the docs meaningful (e.g. how a metric is calculated, why a rule is defined the way it is)
 
 Then generate each file as follows.
+
+---
+
+### `docs/00-domain.md`
+
+```markdown
+# Domain Context
+
+## What This [System / Tool / Service] Does
+
+[One paragraph describing the problem being solved and the domain it operates in. Not what the system does technically — what it means in the real world and why it exists.]
+
+---
+
+## Core Concepts
+
+[Define the key terms and entities in the domain. These are the words that will appear throughout every other doc — define them once here so the rest of the docs don't need to.]
+
+### [Concept — inferred from description]
+
+[One paragraph. What is this thing? Why does it exist? What would go wrong if it were misunderstood?]
+
+---
+
+## [Only if the system computes metrics, applies rules, or makes calculations] Key Rules and Metrics
+
+[For each non-obvious rule or metric, explain what it means and show a worked example. If there are multiple ways to interpret the rule, show why the chosen interpretation is correct and the alternatives are not.]
+
+### [Metric or rule name]
+
+[One sentence: what this measures or enforces and why it matters in this domain.]
+
+**Example:**
+```
+
+[Worked example — concrete inputs, step-by-step derivation, expected output]
+
+```
+
+**Why not [alternative]:** [One sentence on why the obvious alternative is wrong or less appropriate for this domain.]
+
+---
+
+## Open Questions
+
+- [Domain-specific questions that require business context to answer — things that affect how the system should be designed but cannot be resolved from the description alone]
+```
 
 ---
 
@@ -142,6 +192,8 @@ Then generate each file as follows.
 
 **Alternatives considered:**
 
+[If this decision involves a formula, calculation, or algorithm choice, show a worked example proving why the chosen approach produces the correct result and why alternatives do not.]
+
 **Why:**
 
 ---
@@ -173,11 +225,13 @@ Who needs what view of the data and why. This drives entity design and query str
 ```markdown
 # Entities
 
-Entity definitions, fields, and relationships. This is the intermediate step between requirements and schema — reason through what needs to exist and why before committing to a data model.
+[If this is a **stateless system** (CLI tool, batch job, library) with no persistent schema: document the layer-boundary interfaces and the types that flow between them. There are no database entities — describe the in-memory contracts instead. Skip the field tables and use interface/struct definitions relevant to the implementation language.]
 
-## [Entity — inferred from description]
+[If this is a **stateful system** (web service, API, database-backed app): document entity definitions, fields, and relationships. This is the intermediate step between requirements and schema — reason through what needs to exist and why before committing to a data model.]
 
-[One sentence on what this entity represents and why it exists]
+## [Entity or Interface — inferred from description]
+
+[One sentence on what this entity/interface represents and why it exists]
 
 | Field        | Type        | Notes       |
 | ------------ | ----------- | ----------- |
@@ -268,6 +322,20 @@ Infrastructure-level decisions — separate from domain/workflow decisions in `0
 - **Role:** [what each role can attempt]
 - **Ownership:** [which entities are scoped to the requesting actor]
 - **Relationship:** [if actors can act on behalf of others — compliance boundary]
+
+---
+
+## Privacy Boundary
+
+[Only if the system handles personal, sensitive, or regulated data — infer from the description. Skip for internal tooling with no PII. This is an architectural concern, not a security one: it describes what data crosses each layer boundary and what guarantees hold regardless of implementation.]
+
+**What enters the system:** [What data flows in — infer from connectors, APIs, or user input]
+
+**What never leaves each layer:** [e.g. raw records never leave the ingestion layer; individual keys are never passed to the output layer]
+
+**What the output contains:** [e.g. only aggregate counts, no individual values]
+
+**Why this matters architecturally:** [e.g. the privacy guarantee is structural — it holds because individual values never reach the output layer, not because of access controls]
 ```
 
 ---
@@ -406,10 +474,10 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 
 [Infer from the description — who might attack this system and what would they want?]
 
-| Threat | Likelihood | Impact | Mitigation |
-| ------ | ---------- | ------ | ---------- |
-| [e.g. account takeover] | | | |
-| [e.g. data exfiltration] | | | |
+| Threat                   | Likelihood | Impact | Mitigation |
+| ------------------------ | ---------- | ------ | ---------- |
+| [e.g. account takeover]  |            |        |            |
+| [e.g. data exfiltration] |            |        |            |
 
 ---
 
@@ -422,11 +490,13 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 **Decision:** TBD
 
 **Options:**
+
 - Session-based: server holds state — simple to invalidate, requires sticky sessions or shared store to scale
 - JWT: stateless, scales horizontally — no built-in revocation, stolen token valid until expiry
 - OAuth / SSO: delegate to identity provider — good for enterprise or multi-product, adds external dependency
 
 **Open Questions:**
+
 - [e.g. Does this need SSO? Will users log in with a social provider or a company identity?]
 
 ### Session and Token Security
@@ -453,6 +523,7 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 **Decision:** TBD
 
 **Options:**
+
 - API keys: simple, low overhead — no expiry or rotation by default, hard to scope
 - JWT with service identity: stateless, short-lived — requires issuing infrastructure
 - mTLS: strong mutual auth — complex to set up, warranted for internal service mesh
@@ -474,10 +545,10 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 
 [What data does this system hold? Classify by sensitivity — infer from entities]
 
-| Data | Sensitivity | Notes |
-| ---- | ----------- | ----- |
-| [e.g. user email] | PII | Mask in logs |
-| [e.g. order history] | Confidential | |
+| Data                 | Sensitivity  | Notes        |
+| -------------------- | ------------ | ------------ |
+| [e.g. user email]    | PII          | Mask in logs |
+| [e.g. order history] | Confidential |              |
 
 ---
 
@@ -488,10 +559,12 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 **Strategy:** [e.g. minimise collection, mask in logs, encrypt at rest]
 
 **Tradeoffs:**
+
 - Encryption at rest protects against DB compromise but adds key management complexity
 - Masking in logs reduces risk but makes debugging harder
 
 **Open Questions:**
+
 - [Domain-specific: e.g. GDPR right to erasure — can we delete a user without corrupting order history?]
 
 ---
@@ -507,6 +580,7 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 **Decision:** TBD
 
 **Tradeoffs:**
+
 - DB-level encryption (e.g. RDS encryption): simple, transparent, protects against disk theft — does not protect against a compromised DB user
 - Application-level encryption: stronger guarantees, but you own key management and cannot query encrypted fields
 
@@ -514,11 +588,12 @@ Security concerns, strategies, and tradeoffs. No code — this is about what to 
 
 ## Secrets Management
 
-The *decision* of how secrets are managed lives here. The *configuration* of secrets per environment lives in `09-deployment.md`.
+The _decision_ of how secrets are managed lives here. The _configuration_ of secrets per environment lives in `09-deployment.md`.
 
 **Decision:** TBD
 
 **Options:**
+
 - Environment variables: simple, widely supported — secrets visible in process list and logs if not careful
 - SSM Parameter Store / Secrets Manager: auditable, rotatable, no secrets in code — adds runtime dependency
 - Vault: powerful, complex — warranted for large teams or many services
@@ -534,20 +609,48 @@ The *decision* of how secrets are managed lives here. The *configuration* of sec
 
 ### `docs/09-deployment.md`
 
-```markdown
+````markdown
 # Deployment
 
-How this system gets built, shipped, and operated. Informed by the scale and infrastructure decisions in `05-architecture.md` and the NFRs in `01-requirements.md`. Network access and secrets configuration live here — the *decision* of which secrets approach to use lives in `08-security.md`.
+How this system gets built, shipped, and operated. Informed by the scale and infrastructure decisions in `05-architecture.md` and the NFRs in `01-requirements.md`. Network access and secrets configuration live here — the _decision_ of which secrets approach to use lives in `08-security.md`.
+
+---
+
+[**If this is a CLI tool or batch job**, use the section below and omit Environments, Migrations, and Health Checks — they do not apply to a stateless tool invoked on demand.]
+
+[**If this is a web service or long-running process**, use the full template below including Environments, Migrations, and Health Checks.]
+
+---
+
+## Packaging
+
+[For CLI tools and batch jobs — how the binary is built and distributed. Skip for web services and replace with Deployment Target below.]
+
+**Build artefact:** [e.g. compiled binary, Docker image]
+
+**Build approach:** [e.g. multi-stage Dockerfile — build stage compiles the binary, minimal runtime stage packages it; no toolchain in the final image]
+
+**Distribution:** [e.g. Docker image pushed to registry and tagged by commit SHA; invoked by orchestrator at job time]
+
+**Run instructions:**
+
+```sh
+[Copy-pasteable commands to build and run]
+```
+````
+
+**What is injected at runtime:** [Config file, data directories, secrets — nothing sensitive baked into the image]
 
 ---
 
 ## Deployment Target
 
-[Infer from the description and architecture — right-size the recommendation. A solo project does not need Kubernetes. A CLI tool does not need a container registry.]
+[For web services — skip for CLI tools.]
 
 **Hosting:** TBD
 
 **Options to consider:**
+
 - Single server / VPS: simple, low cost — right for small internal tools or solo projects
 - Managed container service (ECS, Cloud Run, App Engine): good balance of simplicity and scalability — right for most web services
 - Kubernetes: warranted when you have many services, complex traffic routing, or a large team — overkill for a single service
@@ -560,15 +663,15 @@ How this system gets built, shipped, and operated. Informed by the scale and inf
 
 ## Environments
 
-[Infer from the scale and team size — a solo project may need only local + prod]
+[For web services. For CLI tools: omit — a stateless tool has no environment topology; it runs wherever it is invoked.]
 
-| Environment | Purpose | Notable differences from prod |
-| ----------- | ------- | ------------------------------ |
-| local | Development | [e.g. local DB, mocked external services] |
-| staging | Pre-prod validation | [e.g. real infra, anonymised data] |
-| prod | Live | |
+| Environment | Purpose             | Notable differences from prod             |
+| ----------- | ------------------- | ----------------------------------------- |
+| local       | Development         | [e.g. local DB, mocked external services] |
+| staging     | Pre-prod validation | [e.g. real infra, anonymised data]        |
+| prod        | Live                |                                           |
 
-**Environment parity concern:** [Flag any gaps between local and prod that are likely to cause bugs — e.g. prod uses managed DB but local uses Docker container]
+**Environment parity concern:** [Flag any gaps between local and prod that are likely to cause bugs]
 
 ---
 
@@ -577,12 +680,13 @@ How this system gets built, shipped, and operated. Informed by the scale and inf
 **Decision:** TBD
 
 **Options:**
+
 - GitHub Actions: simple, integrated with GitHub, generous free tier
 - CircleCI: good for complex pipelines, faster than Actions for large repos
 - CodePipeline: AWS-native, good if already deep in AWS — more configuration overhead
 - Manual deploy script: acceptable for solo projects or very simple deploys
 
-**Pipeline steps:** [Infer what makes sense — test → build → deploy, or test → build → push image → deploy]
+**Pipeline steps:** [Infer what makes sense — e.g. test → build → push image for a CLI tool; test → build → deploy for a service]
 
 ---
 
@@ -591,28 +695,31 @@ How this system gets built, shipped, and operated. Informed by the scale and inf
 **Decision:** TBD
 
 **If containerised:**
+
 - Base image choice and why
 - Multi-stage build to keep image size down
 - Environment config via environment variables, not baked into image
 
-**If not containerised:** [Why not — e.g. Lambda function, static site, CLI tool]
+**If not containerised:** [Why not — e.g. Lambda function, static site, native binary distribution]
 
 ---
 
 ## Infrastructure Provisioning
 
-[What needs to exist before the app can run — DB, queues, buckets, DNS, secrets. Infer from architecture decisions.]
+[What needs to exist before the app can run — DB, queues, buckets, DNS, secrets. For a stateless CLI tool this is often "none" — skip if not applicable.]
 
 **Approach:** TBD
 
 **Options:**
+
 - Terraform: language-agnostic, strong community, good state management
 - CDK: code-first, good for AWS-heavy teams, ties you to AWS
 - Ansible: good for server configuration and provisioning on VMs — less suited to cloud resources
 - Manual / console: acceptable for very small projects, becomes a liability at scale
-- None needed: for simple deploys where the platform handles provisioning (e.g. Vercel, Railway)
+- None needed: stateless tool with no managed infrastructure dependencies
 
 **Resources to provision:**
+
 - [ ] [e.g. PostgreSQL RDS instance]
 - [ ] [e.g. S3 bucket for uploads]
 - [ ] [e.g. SQS queue for async jobs]
@@ -622,19 +729,20 @@ How this system gets built, shipped, and operated. Informed by the scale and inf
 
 ## Data Migrations
 
-[Only if the system has a database with a schema]
+[Only if the system has a database with a schema. Omit for stateless CLI tools.]
 
 **Migration approach:** TBD
 
 **Options:**
+
 - Run automatically on deploy: simple, risky for large migrations — a bad migration takes down the deploy
 - Run manually before deploy: safer, requires coordination
 - Separate migration job: most flexible — decouple migration from deploy, allows zero-downtime patterns
 
 **Zero-downtime considerations:**
+
 - Backward-compatible changes (add column, add table) are safe to run before or during deploy
 - Breaking changes (rename column, drop column, change type) require a multi-step migration across deploys
-- [Domain-specific: e.g. for a high-traffic system — how do we handle migrations without a maintenance window?]
 
 **Rollback strategy:** TBD
 
@@ -642,7 +750,7 @@ How this system gets built, shipped, and operated. Informed by the scale and inf
 
 ## Network Access
 
-[Who can reach what — infer from the deployment target and whether the system is user-facing or internal]
+[For web services and APIs. Omit for CLI tools — network access is the caller's concern, not the tool's.]
 
 **Public endpoints:** [What is exposed to the internet]
 **Private endpoints:** [What is internal-only — e.g. DB, admin APIs, internal services]
@@ -655,16 +763,18 @@ How this system gets built, shipped, and operated. Informed by the scale and inf
 
 [Configuration of secrets per environment. The *approach* is decided in `08-security.md` — this section covers what secrets exist and how they are managed per environment.]
 
-| Secret / Env Var | Description | Required | Where it lives |
-| ---------------- | ----------- | -------- | -------------- |
-| [e.g. `DATABASE_URL`] | DB connection string | Yes | [e.g. SSM / .env] |
-| [e.g. `API_KEY`] | External service key | Yes | |
+| Secret / Env Var      | Description          | Required | Where it lives    |
+| --------------------- | -------------------- | -------- | ----------------- |
+| [e.g. `DATABASE_URL`] | DB connection string | Yes      | [e.g. SSM / .env] |
+| [e.g. `API_KEY`]      | External service key | Yes      |                   |
 
 **Rotation policy:** TBD
 
 ---
 
 ## Health Checks and Readiness
+
+[For long-running services only. Omit for CLI tools and batch jobs — they succeed or fail, they do not expose health endpoints.]
 
 **Health check endpoint:** TBD (e.g. `GET /health`)
 
@@ -678,7 +788,8 @@ How this system gets built, shipped, and operated. Informed by the scale and inf
 
 - [Domain-specific deployment concerns — e.g. how do we handle the first deploy with an empty DB? is there seed data?]
 - [e.g. What is the rollback plan if a migration fails in production?]
-```
+
+````
 
 ---
 
@@ -709,7 +820,7 @@ How this system gets built, shipped, and operated. Informed by the scale and inf
 | ------ | ----- | ---- | --- | ------- |
 
 Any transition not listed above is invalid and must be rejected by the system.
-```
+````
 
 ---
 
@@ -812,6 +923,7 @@ Append to the existing `CLAUDE.md` (or create if missing):
 
 ## Key Files
 
+- `docs/00-domain.md` — domain vocabulary, core concepts, and worked examples
 - `docs/01-requirements.md` — functional and non-functional requirements, design clarifications, open questions
 - `docs/02-decisions.md` — reasoning behind design choices and alternatives considered
 - `docs/03-data-consumers.md` — who needs what view of which data and why

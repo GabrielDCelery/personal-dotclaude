@@ -1,6 +1,6 @@
 ---
-name: design-audit
-description: Reverse-engineers design documentation from an existing codebase. Use when asked to audit, document, or discover the design of an existing project. Scans the codebase, infers decisions already made, identifies gaps and issues, and generates a docs/ scaffold populated with findings.
+name: design-brownfield
+description: Reverse-engineers design documentation from an existing codebase. Use when asked to document, audit, or discover the design of an existing project. Scans the codebase, infers decisions already made, identifies gaps and issues, and generates a docs/ scaffold populated with findings.
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 color: #f9e2af
@@ -53,6 +53,21 @@ Scan the project systematically before writing anything. Collect evidence across
 
 - Middleware, JWT/session handling, role checks — authentication and authorisation approach
 
+**System shape:**
+
+Determine the system type from the evidence collected:
+
+- **Web service / API**: has routes, DB migrations, auth middleware, long-running process
+- **CLI / batch tool**: has a `main` entry point invoked with flags/config, no persistent schema, exits after completion
+- **Library**: no entry point, exported API surface only
+- **Data pipeline**: batch-oriented, consumes and emits datasets, may have no HTTP layer
+
+This affects how `04-entities.md`, `05-architecture.md`, and `09-deployment.md` are populated. Note the inferred system shape before generating any files.
+
+**Domain concepts:**
+
+Look for any core domain rules, metrics, or calculations implemented in the code — especially anything non-obvious or with multiple plausible interpretations. These belong in `00-domain.md` with a worked example.
+
 Once discovery is complete, synthesise findings before generating any files.
 
 ---
@@ -66,7 +81,7 @@ Generate the same scaffold as a greenfield project, but populated with findings.
 - `[Unknown]` — could not be determined from the codebase alone
 - `[Issue: <description>]` — something that looks inconsistent, undocumented, or problematic
 
-Generate files in this order: `00-audit.md` first (summary of everything), then the rest.
+Generate files in this order: `00-audit.md` first (summary of everything), `00-domain.md` second, then the rest.
 
 ---
 
@@ -75,6 +90,7 @@ Generate files in this order: `00-audit.md` first (summary of everything), then 
 ### Always created
 
 - `docs/00-audit.md` — top-level findings: what was found, what's missing, what looks problematic
+- `docs/00-domain.md` — domain vocabulary, core concepts, and worked examples reverse-engineered from the codebase
 - `docs/01-requirements.md` — functional requirements inferred from code and existing docs
 - `docs/02-decisions.md` — design decisions already made, inferred from codebase
 - `docs/03-data-consumers.md` — who consumes what data, inferred from queries and API endpoints
@@ -146,6 +162,53 @@ Summary of findings from codebase discovery. Read this first.
 [Where inferences are weak — things that should be verified with the team]
 
 - [e.g. DB choice inferred from ORM dependency — confirm it's PostgreSQL not MySQL]
+```
+
+---
+
+### `docs/00-domain.md`
+
+```markdown
+# Domain Context
+
+## What This [System / Tool / Service] Does
+
+[One paragraph describing the problem being solved and the domain it operates in — inferred from code, existing docs, and naming conventions. Not what the system does technically — what it means in the real world and why it exists.] [Confirmed: README / Inferred from source]
+
+---
+
+## Core Concepts
+
+[Domain terms found in the codebase — type names, function names, config keys, comments. Define each once here so the rest of the docs don't need to.]
+
+### [Concept — inferred from naming / logic]
+
+[One paragraph. What is this thing? Why does it exist? What would go wrong if it were misunderstood.] [Confirmed: src/... / Inferred]
+
+---
+
+## [Only if the system computes metrics, applies rules, or makes calculations] Key Rules and Metrics
+
+[For each non-obvious rule or metric found in the code, explain what it means and show a worked example. Flag any rules where the implementation could be interpreted multiple ways.]
+
+### [Metric or rule name] [Confirmed: src/...]
+
+[One sentence: what this measures or enforces and why it matters in this domain.]
+
+**Example:**
+```
+
+[Worked example — concrete inputs, step-by-step derivation, expected output — derived from tests or source logic]
+
+```
+
+**Why not [alternative]:** [One sentence on why the obvious alternative is wrong or less appropriate — inferred from tests or comments if available, otherwise flagged as [Unknown]]
+
+---
+
+## Open Questions
+
+- [Things that cannot be determined from code alone — domain rules that look arbitrary, naming that is ambiguous, calculations with no comment explaining why]
 ```
 
 ---
@@ -233,6 +296,8 @@ Decisions inferred from the codebase. Each decision should be verified and confi
 
 **Why (if known):**
 
+[If this decision involves a formula, calculation, or algorithm choice, include a worked example showing why the chosen approach produces the correct result — derive it from tests or source logic if no comment explains it.]
+
 **Open:** [What's unknown about this decision — why was this chosen over alternatives?]
 
 ---
@@ -264,17 +329,19 @@ Inferred from API endpoints, queries, and service boundaries found in the codeba
 ```markdown
 # Entities
 
-Inferred from models, migrations, and schema files.
+[If this is a **stateless system** (CLI tool, batch job, library) with no persistent schema: document the layer-boundary interfaces and the types that flow between them — inferred from interface definitions, structs, and function signatures. There are no database entities. Skip field tables and use interface/struct definitions relevant to the implementation language.] [Confirmed: absence of migration files / Inferred from system shape]
 
-## [Entity — inferred from model/migration]
+[If this is a **stateful system** (web service, API, database-backed app): document entity definitions, fields, and relationships inferred from models, migrations, and schema files.]
 
-[One sentence on what this entity represents — inferred from field names and relationships]
+## [Entity or Interface — inferred from model/migration/interface definition]
+
+[One sentence on what this entity/interface represents — inferred from field names, method signatures, and relationships]
 
 | Field                            | Type | Notes |
 | -------------------------------- | ---- | ----- |
 | [Confirmed from migration/model] |      |       |
 
-**Relationships:** [Inferred from foreign keys or ORM associations]
+**Relationships:** [Inferred from foreign keys, ORM associations, or interface dependencies]
 
 **Open:** [What's unclear about this entity's purpose or boundaries]
 
@@ -351,6 +418,20 @@ Infrastructure and architectural decisions as found in the codebase.
 - **Relationship:** [Confirmed / Not found]
 
 **Issue:** [Any auth gaps found — e.g. missing ownership checks on certain endpoints]
+
+---
+
+## Privacy Boundary
+
+[Only if the system handles personal, sensitive, or regulated data — infer from entity field names, PII-related variable names, or domain context. Skip for internal tooling with no PII.]
+
+**What enters the system:** [Confirmed from connectors, API inputs, or user-facing routes]
+
+**What never leaves each layer:** [Inferred from layer boundaries — e.g. raw records never passed to output layer] [Confirmed: src/... / Inferred]
+
+**What the output contains:** [Confirmed from response shapes or output writer implementations]
+
+**Issue:** [Any place where individual values leak across a layer boundary that should be aggregate-only]
 ```
 
 ---
@@ -486,11 +567,11 @@ Security posture as found in the codebase. Gaps flagged. Network access and secr
 
 ### Common Web Vulnerabilities
 
-| Concern | Status | Notes |
-| ------- | ------ | ----- |
-| XSS | [Confirmed mitigated / Not found] | |
-| CSRF | [Confirmed mitigated / Not found] | |
-| Mass assignment | [Confirmed mitigated / Not found] | |
+| Concern         | Status                            | Notes |
+| --------------- | --------------------------------- | ----- |
+| XSS             | [Confirmed mitigated / Not found] |       |
+| CSRF            | [Confirmed mitigated / Not found] |       |
+| Mass assignment | [Confirmed mitigated / Not found] |       |
 
 ---
 
@@ -516,9 +597,9 @@ Security posture as found in the codebase. Gaps flagged. Network access and secr
 
 [Inferred from entities and field names]
 
-| Data | Sensitivity | In codebase | Notes |
-| ---- | ----------- | ----------- | ----- |
-| [e.g. user email] | PII | Yes | Confirm masking in logs |
+| Data              | Sensitivity | In codebase | Notes                   |
+| ----------------- | ----------- | ----------- | ----------------------- |
+| [e.g. user email] | PII         | Yes         | Confirm masking in logs |
 
 ---
 
@@ -552,10 +633,10 @@ Security posture as found in the codebase. Gaps flagged. Network access and secr
 
 ## Issues Found
 
-| Issue | Location | Severity |
-| ----- | -------- | -------- |
-| [e.g. API key hardcoded] | `src/config.ts` | High |
-| [e.g. No rate limiting on auth endpoints] | `src/routes/auth.ts` | Medium |
+| Issue                                     | Location             | Severity |
+| ----------------------------------------- | -------------------- | -------- |
+| [e.g. API key hardcoded]                  | `src/config.ts`      | High     |
+| [e.g. No rate limiting on auth endpoints] | `src/routes/auth.ts` | Medium   |
 
 ---
 
@@ -571,11 +652,31 @@ Security posture as found in the codebase. Gaps flagged. Network access and secr
 ```markdown
 # Deployment
 
-Deployment posture as found in the codebase and infrastructure config. Gaps flagged. Network access and secrets configuration are here — the *approach* to secrets is in `08-security.md`.
+Deployment posture as found in the codebase and infrastructure config. Gaps flagged. Network access and secrets configuration are here — the _approach_ to secrets is in `08-security.md`.
+
+[**If this is a CLI tool or batch job** — confirmed from system shape: omit Environments, Migrations, Network Access, and Health Checks. Use the Packaging section instead of Deployment Target.]
+
+---
+
+## Packaging
+
+[For CLI tools and batch jobs — skip for web services.]
+
+**Build artefact:** [Confirmed: e.g. compiled binary, Docker image — source: Dockerfile / Makefile / CI config]
+
+**Build approach:** [Confirmed: e.g. multi-stage Dockerfile / single-stage / native binary — source]
+
+**Distribution:** [Confirmed: e.g. image pushed to registry / binary attached to release / Unknown]
+
+**What is injected at runtime:** [Confirmed: config file, data mounts, env vars — source: Dockerfile / CI / README]
+
+**Issue:** [Anything sensitive baked into the image, missing runtime injection pattern, or undocumented run instructions]
 
 ---
 
 ## Deployment Target
+
+[For web services — skip for CLI tools.]
 
 **Hosting found:** [Confirmed: e.g. ECS / Lambda / VPS / Unknown — source: Dockerfile / terraform / CI config]
 
@@ -587,11 +688,13 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 
 ## Environments
 
-| Environment | Found | Notes |
-| ----------- | ----- | ----- |
-| local | [Confirmed / Not found] | |
-| staging | [Confirmed / Not found] | |
-| prod | [Confirmed / Not found] | |
+[For web services. For CLI tools: omit — a stateless tool has no environment topology.]
+
+| Environment | Found                   | Notes |
+| ----------- | ----------------------- | ----- |
+| local       | [Confirmed / Not found] |       |
+| staging     | [Confirmed / Not found] |       |
+| prod        | [Confirmed / Not found] |       |
 
 **Environment parity gaps:** [Any differences between local and prod likely to cause bugs — e.g. local uses SQLite, prod uses PostgreSQL]
 
@@ -619,6 +722,8 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 
 ## Data Migrations
 
+[For stateful systems with a schema. For CLI tools and stateless batch jobs: omit.]
+
 **Migration tooling found:** [Confirmed: e.g. Flyway / golang-migrate / custom / Not found]
 
 **How migrations run:** [Confirmed: e.g. automatically on deploy / manually / Unknown]
@@ -630,6 +735,8 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 ---
 
 ## Network Access
+
+[For web services and APIs. For CLI tools: omit — network access is the caller's concern.]
 
 **Public endpoints:** [Confirmed from infra config or CI / Unknown]
 
@@ -643,15 +750,17 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 
 ## Secrets and Environment Variables
 
-| Secret / Env Var | Found | Where it lives | Issue |
-| ---------------- | ----- | -------------- | ----- |
-| [Confirmed from .env.example / CI config / source] | Yes | [e.g. SSM / .env / hardcoded] | |
+| Secret / Env Var                                   | Found | Where it lives                | Issue |
+| -------------------------------------------------- | ----- | ----------------------------- | ----- |
+| [Confirmed from .env.example / CI config / source] | Yes   | [e.g. SSM / .env / hardcoded] |       |
 
 **Issue:** [Any hardcoded secrets, missing rotation, or secrets committed to repo]
 
 ---
 
 ## Health Checks
+
+[For long-running services only. For CLI tools and batch jobs: omit — they succeed or fail, they do not expose health endpoints.]
 
 **Health endpoint found:** [Confirmed: source / Not found]
 
@@ -661,11 +770,11 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 
 ## Issues Found
 
-| Issue | Location | Severity |
-| ----- | -------- | -------- |
-| [e.g. No staging environment] | | Medium |
-| [e.g. Secrets in .env committed to repo] | `.env` | High |
-| [e.g. No rollback strategy for migrations] | | Medium |
+| Issue                                      | Location | Severity |
+| ------------------------------------------ | -------- | -------- |
+| [e.g. No staging environment]              |          | Medium   |
+| [e.g. Secrets in .env committed to repo]   | `.env`   | High     |
+| [e.g. No rollback strategy for migrations] |          | Medium   |
 
 ---
 
@@ -815,6 +924,7 @@ Design audit completed. Docs generated from codebase discovery — items marked 
 ## Key Files
 
 - `docs/00-audit.md` — top-level findings, gaps, and issues (start here)
+- `docs/00-domain.md` — domain vocabulary, core concepts, and worked examples reverse-engineered from the codebase
 - `docs/01-requirements.md` — functional requirements inferred from code
 - `docs/02-decisions.md` — design decisions found in codebase
 - `docs/03-data-consumers.md` — data consumers inferred from queries and endpoints
