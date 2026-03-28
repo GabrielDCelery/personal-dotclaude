@@ -1,6 +1,6 @@
 ---
 name: design-extend
-description: Extends an existing project's design docs with a new feature or stage. Use when a project already has docs/ from design-greenfield or design-audit and you want to add significant new functionality. Reads existing docs, carries over what's still valid, identifies what changes, and adds new sections without blowing away existing decisions.
+description: Extends an existing project's design docs with a new feature or stage. Use when a project already has docs/ from design-greenfield or design-brownfield and you want to add significant new functionality. Reads existing docs, carries over what's still valid, identifies what changes, and adds new sections without blowing away existing decisions.
 tools: Read, Write, Edit, Glob
 model: sonnet
 color: #89dceb
