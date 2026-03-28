@@ -64,13 +64,7 @@ Write the deep dive. See output format below.
 
 ---
 
-### Step 5 — Update CLAUDE.md
-
-If a new file was created, append it to the `## Key Files` section in `CLAUDE.md`. If CLAUDE.md has no key files section, add one. If the file was extended, no CLAUDE.md update is needed.
-
----
-
-### Step 6 — Report
+### Step 5 — Report
 
 Tell the user what was created or extended, and give a one-sentence summary of the key finding.
 

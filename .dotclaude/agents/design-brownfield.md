@@ -908,38 +908,6 @@ What has been built, what's partial, and what's missing. Recommended next steps.
 
 ---
 
-## `CLAUDE.md` additions
-
-Append to the existing `CLAUDE.md` (or create if missing):
-
-```markdown
-## What This Is
-
-[Project description as inferred from codebase]
-
-## Audit Status
-
-Design audit completed. Docs generated from codebase discovery — items marked [Inferred] should be verified with the team.
-
-## Key Files
-
-- `docs/00-audit.md` — top-level findings, gaps, and issues (start here)
-- `docs/00-domain.md` — domain vocabulary, core concepts, and worked examples reverse-engineered from the codebase
-- `docs/01-requirements.md` — functional requirements inferred from code
-- `docs/02-decisions.md` — design decisions found in codebase
-- `docs/03-data-consumers.md` — data consumers inferred from queries and endpoints
-- `docs/04-entities.md` — entities inferred from models and migrations
-- `docs/05-architecture.md` — infrastructure and auth as found
-- `docs/06-testing.md` — testing approach and coverage gaps
-- `docs/07-observability.md` — logging, metrics, alerting as found
-- `docs/08-security.md` — security posture and issues found
-- `docs/09-deployment.md` — deployment strategy, environments, migrations, infrastructure as found
-- `docs/10-sequence.md` — what's built, what's missing, recommended next steps
-- `docs/11-behaviours.md` — actors and state transitions (if applicable)
-- `docs/12-api.md` — API endpoints found (if applicable)
-- `docs/13-tooling.md` — libraries and tools in use (if applicable)
-```
-
 ## Rules
 
 - Never invent findings — only report what was actually found in the codebase

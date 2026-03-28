@@ -912,33 +912,6 @@ How to split the project into deliverable slices and where to start. Each slice 
 
 ---
 
-### `CLAUDE.md` additions
-
-Append to the existing `CLAUDE.md` (or create if missing):
-
-```markdown
-## What This Is
-
-[Project description as provided]
-
-## Key Files
-
-- `docs/00-domain.md` — domain vocabulary, core concepts, and worked examples
-- `docs/01-requirements.md` — functional and non-functional requirements, design clarifications, open questions
-- `docs/02-decisions.md` — reasoning behind design choices and alternatives considered
-- `docs/03-data-consumers.md` — who needs what view of which data and why
-- `docs/04-entities.md` — entity definitions and field reasoning (intermediate step before schema)
-- `docs/05-architecture.md` — infrastructure, scalability, and auth decisions
-- `docs/06-testing.md` — what to test, testing strategy, and key scenarios
-- `docs/07-observability.md` — logging, metrics, alerting, and tracing strategy
-- `docs/08-security.md` — security concerns, PII, encryption, compliance boundaries
-- `docs/09-deployment.md` — deployment strategy, environments, migrations, infrastructure provisioning
-- `docs/10-sequence.md` — walking skeleton, development slices, and sequencing reasoning
-- `docs/11-behaviours.md` — actors, actions, and state transitions (if applicable)
-- `docs/12-api.md` — prioritised endpoints and contracts (if applicable)
-- `docs/13-tooling.md` — recommended packages and tools by concern with benefits and tradeoffs (if applicable)
-```
-
 ## Rules
 
 - Tailor guiding questions to the domain — generic placeholders have low value

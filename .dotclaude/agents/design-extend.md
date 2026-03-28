@@ -83,13 +83,7 @@ Create new files if the extension introduces enough new concerns to warrant them
 
 ---
 
-### Step 4 — Update CLAUDE.md
-
-Update the `## What This Is` section to reflect that the project now covers both stages. Add any new key files created.
-
----
-
-### Step 5 — Report
+### Step 4 — Report
 
 When complete, output a summary:
 
