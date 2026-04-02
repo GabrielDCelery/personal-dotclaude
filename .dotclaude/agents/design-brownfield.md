@@ -74,12 +74,14 @@ Once discovery is complete, synthesise findings before generating any files.
 
 ### Phase 2 — Generate docs
 
-Generate the same scaffold as a greenfield project, but populated with findings. Use these markers throughout:
+Generate the same scaffold as a greenfield project, but populated with findings. Use these markers in `00-audit.md` only:
 
 - `[Confirmed: <source>]` — directly observed in a specific file
 - `[Inferred]` — reasoned from indirect evidence (e.g. dependency implies pattern)
 - `[Unknown]` — could not be determined from the codebase alone
 - `[Issue: <description>]` — something that looks inconsistent, undocumented, or problematic
+
+All other files should present findings as plain prose without inline markers — evidence citations and confidence levels belong in `00-audit.md`.
 
 Generate files in this order: `00-audit.md` first (summary of everything), `00-domain.md` second, then the rest.
 
@@ -173,7 +175,7 @@ Summary of findings from codebase discovery. Read this first.
 
 ## What This [System / Tool / Service] Does
 
-[One paragraph describing the problem being solved and the domain it operates in — inferred from code, existing docs, and naming conventions. Not what the system does technically — what it means in the real world and why it exists.] [Confirmed: README / Inferred from source]
+[One paragraph describing the problem being solved and the domain it operates in — inferred from code, existing docs, and naming conventions. Not what the system does technically — what it means in the real world and why it exists.]
 
 ---
 
@@ -183,7 +185,7 @@ Summary of findings from codebase discovery. Read this first.
 
 ### [Concept — inferred from naming / logic]
 
-[One paragraph. What is this thing? Why does it exist? What would go wrong if it were misunderstood.] [Confirmed: src/... / Inferred]
+[One paragraph. What is this thing? Why does it exist? What would go wrong if it were misunderstood.]
 
 ---
 
@@ -191,7 +193,7 @@ Summary of findings from codebase discovery. Read this first.
 
 [For each non-obvious rule or metric found in the code, explain what it means and show a worked example. Flag any rules where the implementation could be interpreted multiple ways.]
 
-### [Metric or rule name] [Confirmed: src/...]
+### [Metric or rule name]
 
 [One sentence: what this measures or enforces and why it matters in this domain.]
 
@@ -202,7 +204,7 @@ Summary of findings from codebase discovery. Read this first.
 
 ```
 
-**Why not [alternative]:** [One sentence on why the obvious alternative is wrong or less appropriate — inferred from tests or comments if available, otherwise flagged as [Unknown]]
+**Why not [alternative]:** [One sentence on why the obvious alternative is wrong or less appropriate]
 
 ---
 
@@ -218,13 +220,13 @@ Summary of findings from codebase discovery. Read this first.
 ```markdown
 # Requirements
 
-Inferred from codebase. Items marked [Unknown] could not be determined from code alone.
+Inferred from codebase.
 
 ## Functional Requirements
 
 ### [Feature area — inferred from source structure or routes]
 
-- FR1: [Inferred from route/handler/model] [Confirmed: src/...]
+- FR1: [Inferred from route/handler/model]
 - FR2: ...
 
 ---
@@ -233,19 +235,19 @@ Inferred from codebase. Items marked [Unknown] could not be determined from code
 
 ### Performance
 
-- [Confirmed targets if found in config/docs, otherwise Unknown]
+- [Describe targets if found in config/docs, otherwise note as undocumented]
 
 ### Scalability
 
-- [Unknown unless infrastructure gives clues]
+- [Describe if infrastructure gives clues, otherwise note as undocumented]
 
 ### Availability
 
-- [Unknown unless SLAs documented]
+- [Describe if SLAs are documented, otherwise note as undocumented]
 
 ### Data Retention
 
-- [Inferred from migration history or config if present]
+- [Describe if found in migration history or config]
 
 ---
 
@@ -275,14 +277,14 @@ Decisions inferred from the codebase. Each decision should be verified and confi
 
 **Domain Model**
 
-| #   | Question            | Decision         | Confidence             |
-| --- | ------------------- | ---------------- | ---------------------- |
-| D1  | [Inferred decision] | [What was found] | [Confirmed / Inferred] |
+| #   | Question            | Decision         |
+| --- | ------------------- | ---------------- |
+| D1  | [Inferred decision] | [What was found] |
 
 **Infrastructure**
 
-| #   | Question | Decision | Confidence |
-| --- | -------- | -------- | ---------- |
+| #   | Question | Decision |
+| --- | -------- | -------- |
 
 ---
 
@@ -290,7 +292,7 @@ Decisions inferred from the codebase. Each decision should be verified and confi
 
 ### D1: [Decision]
 
-**Decision:** [What was found] [Confirmed: source / Inferred]
+**Decision:** [What was found and where]
 
 **Reasoning documented:** Yes / No
 
@@ -315,9 +317,9 @@ Inferred from API endpoints, queries, and service boundaries found in the codeba
 ## [Actor or system — inferred from routes/handlers]
 
 **What they need:** [Inferred from queries or response shapes]
-**Why:** [Unknown unless documented]
-**Freshness requirement:** [Inferred from caching config or Unknown]
-**Key queries:** [Confirmed: src/...]
+**Why:** [Describe if documented, otherwise note as undocumented]
+**Freshness requirement:** [Inferred from caching config, or note as not found]
+**Key queries:** [Describe the main queries or endpoints]
 
 ---
 ```
@@ -329,7 +331,7 @@ Inferred from API endpoints, queries, and service boundaries found in the codeba
 ```markdown
 # Entities
 
-[If this is a **stateless system** (CLI tool, batch job, library) with no persistent schema: document the layer-boundary interfaces and the types that flow between them — inferred from interface definitions, structs, and function signatures. There are no database entities. Skip field tables and use interface/struct definitions relevant to the implementation language.] [Confirmed: absence of migration files / Inferred from system shape]
+[If this is a **stateless system** (CLI tool, batch job, library) with no persistent schema: document the layer-boundary interfaces and the types that flow between them — inferred from interface definitions, structs, and function signatures. There are no database entities. Skip field tables and use interface/struct definitions relevant to the implementation language.]
 
 [If this is a **stateful system** (web service, API, database-backed app): document entity definitions, fields, and relationships inferred from models, migrations, and schema files.]
 
@@ -337,9 +339,9 @@ Inferred from API endpoints, queries, and service boundaries found in the codeba
 
 [One sentence on what this entity/interface represents — inferred from field names, method signatures, and relationships]
 
-| Field                            | Type | Notes |
-| -------------------------------- | ---- | ----- |
-| [Confirmed from migration/model] |      |       |
+| Field        | Type | Notes |
+| ------------ | ---- | ----- |
+| [Field name] |      |       |
 
 **Relationships:** [Inferred from foreign keys, ORM associations, or interface dependencies]
 
@@ -363,7 +365,7 @@ Infrastructure and architectural decisions as found in the codebase.
 
 ### Protocol / Transport
 
-**Decision:** [Confirmed: e.g. REST — inferred from router setup in src/...]
+**Decision:** [e.g. REST — inferred from router setup]
 
 **Alternatives documented:** No / Yes
 
@@ -371,13 +373,13 @@ Infrastructure and architectural decisions as found in the codebase.
 
 ### Caching
 
-**Decision:** [Confirmed / Not found]
+**Decision:** [Describe what was found, or note as not found]
 
 ---
 
 ### Messaging / Async
 
-**Decision:** [Confirmed / Not found]
+**Decision:** [Describe what was found, or note as not found]
 
 ---
 
@@ -385,13 +387,13 @@ Infrastructure and architectural decisions as found in the codebase.
 
 ### Read/Write Split
 
-[Confirmed from DB config / Not found]
+[Describe if found in DB config, otherwise note as not found]
 
 ### Known Hotspots
 
 [Inferred from code — any obvious N+1 queries, missing indexes, large transactions]
 
-- [Issue: description] [Confirmed: src/...]
+- [Description and source file]
 
 ### What Is Not Addressed
 
@@ -403,21 +405,21 @@ Infrastructure and architectural decisions as found in the codebase.
 
 ### Authentication
 
-**Decision:** [Confirmed: e.g. JWT — found in src/middleware/auth.ts]
+**Decision:** [e.g. JWT — describe what was found and where]
 
-**Token expiry / refresh:** [Confirmed / Not found]
+**Token expiry / refresh:** [Describe if found, otherwise note as not found]
 
 ---
 
 ### Authorisation
 
-**Decision:** [Confirmed: e.g. RBAC — role checks found in src/...]
+**Decision:** [e.g. RBAC — describe what was found]
 
-- **Role:** [Confirmed roles found]
-- **Ownership:** [Confirmed / Not enforced / Not found]
-- **Relationship:** [Confirmed / Not found]
+- **Role:** [Roles found]
+- **Ownership:** [Describe if found]
+- **Relationship:** [Describe if found]
 
-**Issue:** [Any auth gaps found — e.g. missing ownership checks on certain endpoints]
+**Issues:** [Any auth gaps found — e.g. missing ownership checks on certain endpoints]
 
 ---
 
@@ -425,13 +427,13 @@ Infrastructure and architectural decisions as found in the codebase.
 
 [Only if the system handles personal, sensitive, or regulated data — infer from entity field names, PII-related variable names, or domain context. Skip for internal tooling with no PII.]
 
-**What enters the system:** [Confirmed from connectors, API inputs, or user-facing routes]
+**What enters the system:** [From connectors, API inputs, or user-facing routes]
 
-**What never leaves each layer:** [Inferred from layer boundaries — e.g. raw records never passed to output layer] [Confirmed: src/... / Inferred]
+**What never leaves each layer:** [Inferred from layer boundaries — e.g. raw records never passed to output layer]
 
-**What the output contains:** [Confirmed from response shapes or output writer implementations]
+**What the output contains:** [From response shapes or output writer implementations]
 
-**Issue:** [Any place where individual values leak across a layer boundary that should be aggregate-only]
+**Issues:** [Any place where individual values leak across a layer boundary that should be aggregate-only]
 ```
 
 ---
@@ -445,16 +447,12 @@ Testing approach as found in the codebase.
 
 ## What Is Tested
 
-[Inferred from test file locations and names]
-
-- [e.g. Unit tests for domain logic] [Confirmed: tests/unit/]
-- [e.g. Integration tests for DB layer] [Confirmed: tests/integration/]
+- [e.g. Unit tests for domain logic — tests/unit/]
+- [e.g. Integration tests for DB layer — tests/integration/]
 
 ---
 
 ## What Is Not Tested
-
-[Gaps found — areas with no test coverage]
 
 - [e.g. No tests for auth middleware]
 - [e.g. No E2E tests]
@@ -465,11 +463,11 @@ Testing approach as found in the codebase.
 
 ### Framework / Runner
 
-[Confirmed: e.g. Jest — found in package.json]
+[e.g. Jest — found in package.json]
 
 ### Test Structure
 
-[Confirmed: describe what's there]
+[Describe what's there]
 
 ---
 
@@ -500,7 +498,7 @@ Logging, metrics, and alerting as found in the codebase.
 
 ## Logging
 
-**What's in place:** [Confirmed: library used, log levels found]
+**What's in place:** [Library used, log levels found]
 
 **Gaps:**
 
@@ -511,7 +509,7 @@ Logging, metrics, and alerting as found in the codebase.
 
 ## Metrics
 
-**What's in place:** [Confirmed / Not found]
+**What's in place:** [Describe if found, otherwise note as not found]
 
 **Gaps:** [e.g. No metrics instrumentation found]
 
@@ -519,13 +517,13 @@ Logging, metrics, and alerting as found in the codebase.
 
 ## Alerting
 
-**What's in place:** [Confirmed from CI/CD or config / Not found]
+**What's in place:** [Describe if found, otherwise note as not found]
 
 ---
 
 ## Tracing
 
-**What's in place:** [Confirmed / Not found]
+**What's in place:** [Describe if found, otherwise note as not found]
 
 ---
 
@@ -559,19 +557,19 @@ Security posture as found in the codebase. Gaps flagged. Network access and secr
 
 ### Authentication
 
-**Approach found:** [Confirmed: e.g. JWT / session / OAuth — source file]
+**Approach found:** [e.g. JWT / session / OAuth — source file]
 
-**Token expiry / refresh:** [Confirmed / Not found]
+**Token expiry / refresh:** [Describe if found, otherwise note as not found]
 
-**Revocation strategy:** [Confirmed / Not found — Issue if JWT with no revocation mechanism]
+**Revocation strategy:** [Describe if found, otherwise note as not found]
 
 ### Common Web Vulnerabilities
 
-| Concern         | Status                            | Notes |
-| --------------- | --------------------------------- | ----- |
-| XSS             | [Confirmed mitigated / Not found] |       |
-| CSRF            | [Confirmed mitigated / Not found] |       |
-| Mass assignment | [Confirmed mitigated / Not found] |       |
+| Concern         | Status                  | Notes |
+| --------------- | ----------------------- | ----- |
+| XSS             | [Mitigated / Not found] |       |
+| CSRF            | [Mitigated / Not found] |       |
+| Mass assignment | [Mitigated / Not found] |       |
 
 ---
 
@@ -581,15 +579,15 @@ Security posture as found in the codebase. Gaps flagged. Network access and secr
 
 ### API Authentication
 
-**Approach found:** [Confirmed / Not found]
+**Approach found:** [Describe if found, otherwise note as not found]
 
 ### Rate Limiting
 
-**In place:** [Confirmed: source / Not found — Issue if public-facing endpoints have no rate limiting]
+**In place:** [Describe if found — note if public-facing endpoints have no rate limiting]
 
 ### Input Validation
 
-**In place:** [Confirmed: library used / Not found — Issue if no boundary validation]
+**In place:** [Library used if found — note if no boundary validation]
 
 ---
 
@@ -605,11 +603,11 @@ Security posture as found in the codebase. Gaps flagged. Network access and secr
 
 ## PII and Data Privacy
 
-**PII found:** [Confirmed from entity fields]
+**PII found:** [Describe fields found]
 
-**Masking in logs:** [Confirmed / Not found — Issue if PII fields logged]
+**Masking in logs:** [Describe if found — note if PII fields are logged]
 
-**Retention policy:** [Confirmed / Unknown]
+**Retention policy:** [Describe if found, otherwise note as undocumented]
 
 ---
 
@@ -617,17 +615,17 @@ Security posture as found in the codebase. Gaps flagged. Network access and secr
 
 ### In Transit
 
-**TLS enforced:** [Confirmed / Not confirmed]
+**TLS enforced:** [Describe if confirmed, otherwise note as unverified]
 
 ### At Rest
 
-**DB encryption:** [Confirmed from infra config / Unknown]
+**DB encryption:** [Describe if found in infra config, otherwise note as unknown]
 
 ---
 
 ## Secrets Management
 
-**Approach found:** [Confirmed: e.g. env vars / SSM / hardcoded — Issue if hardcoded]
+**Approach found:** [e.g. env vars / SSM / hardcoded — flag if hardcoded]
 
 ---
 
@@ -654,7 +652,7 @@ Security posture as found in the codebase. Gaps flagged. Network access and secr
 
 Deployment posture as found in the codebase and infrastructure config. Gaps flagged. Network access and secrets configuration are here — the _approach_ to secrets is in `08-security.md`.
 
-[**If this is a CLI tool or batch job** — confirmed from system shape: omit Environments, Migrations, Network Access, and Health Checks. Use the Packaging section instead of Deployment Target.]
+[**If this is a CLI tool or batch job** — omit Environments, Migrations, Network Access, and Health Checks. Use the Packaging section instead of Deployment Target.]
 
 ---
 
@@ -662,15 +660,15 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 
 [For CLI tools and batch jobs — skip for web services.]
 
-**Build artefact:** [Confirmed: e.g. compiled binary, Docker image — source: Dockerfile / Makefile / CI config]
+**Build artefact:** [e.g. compiled binary, Docker image — source: Dockerfile / Makefile / CI config]
 
-**Build approach:** [Confirmed: e.g. multi-stage Dockerfile / single-stage / native binary — source]
+**Build approach:** [e.g. multi-stage Dockerfile / single-stage / native binary]
 
-**Distribution:** [Confirmed: e.g. image pushed to registry / binary attached to release / Unknown]
+**Distribution:** [e.g. image pushed to registry / binary attached to release / not found]
 
-**What is injected at runtime:** [Confirmed: config file, data mounts, env vars — source: Dockerfile / CI / README]
+**What is injected at runtime:** [Config file, data mounts, env vars — source: Dockerfile / CI / README]
 
-**Issue:** [Anything sensitive baked into the image, missing runtime injection pattern, or undocumented run instructions]
+**Issues:** [Anything sensitive baked into the image, missing runtime injection pattern, or undocumented run instructions]
 
 ---
 
@@ -678,9 +676,9 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 
 [For web services — skip for CLI tools.]
 
-**Hosting found:** [Confirmed: e.g. ECS / Lambda / VPS / Unknown — source: Dockerfile / terraform / CI config]
+**Hosting found:** [e.g. ECS / Lambda / VPS — source: Dockerfile / terraform / CI config]
 
-**Containerised:** [Yes — Confirmed: Dockerfile / No / Unknown]
+**Containerised:** [Yes — Dockerfile found / No / Not found]
 
 **Right-sized assessment:** [Is the current deployment target appropriate for the described scale? Flag if over- or under-engineered]
 
@@ -690,11 +688,11 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 
 [For web services. For CLI tools: omit — a stateless tool has no environment topology.]
 
-| Environment | Found                   | Notes |
-| ----------- | ----------------------- | ----- |
-| local       | [Confirmed / Not found] |       |
-| staging     | [Confirmed / Not found] |       |
-| prod        | [Confirmed / Not found] |       |
+| Environment | Found           | Notes |
+| ----------- | --------------- | ----- |
+| local       | Yes / Not found |       |
+| staging     | Yes / Not found |       |
+| prod        | Yes / Not found |       |
 
 **Environment parity gaps:** [Any differences between local and prod likely to cause bugs — e.g. local uses SQLite, prod uses PostgreSQL]
 
@@ -702,21 +700,21 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 
 ## CI/CD
 
-**Pipeline found:** [Confirmed: e.g. GitHub Actions — source: .github/workflows / Not found]
+**Pipeline found:** [e.g. GitHub Actions — source: .github/workflows / Not found]
 
-**Pipeline steps:** [Confirmed from CI config]
+**Pipeline steps:** [Describe steps found in CI config]
 
-**Deploy trigger:** [Confirmed: e.g. merge to main / manual / Not found]
+**Deploy trigger:** [e.g. merge to main / manual / Not found]
 
 ---
 
 ## Infrastructure Provisioning
 
-**IaC found:** [Confirmed: e.g. Terraform / CDK / Ansible / None found]
+**IaC found:** [e.g. Terraform / CDK / Ansible / None found]
 
-**Resources provisioned:** [Confirmed from IaC files / Unknown]
+**Resources provisioned:** [Describe from IaC files, or note as unknown]
 
-**Issue:** [Anything manually provisioned that should be in IaC]
+**Issues:** [Anything manually provisioned that should be in IaC]
 
 ---
 
@@ -724,13 +722,13 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 
 [For stateful systems with a schema. For CLI tools and stateless batch jobs: omit.]
 
-**Migration tooling found:** [Confirmed: e.g. Flyway / golang-migrate / custom / Not found]
+**Migration tooling found:** [e.g. Flyway / golang-migrate / custom / Not found]
 
-**How migrations run:** [Confirmed: e.g. automatically on deploy / manually / Unknown]
+**How migrations run:** [e.g. automatically on deploy / manually / not documented]
 
-**Zero-downtime approach:** [Confirmed / Not found — Issue if breaking changes deployed without phased migration]
+**Zero-downtime approach:** [Describe if found — note if breaking changes could be deployed without a phased migration]
 
-**Rollback strategy:** [Confirmed / Not found]
+**Rollback strategy:** [Describe if found, otherwise note as not found]
 
 ---
 
@@ -738,23 +736,23 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 
 [For web services and APIs. For CLI tools: omit — network access is the caller's concern.]
 
-**Public endpoints:** [Confirmed from infra config or CI / Unknown]
+**Public endpoints:** [Describe if found in infra config or CI, otherwise note as unknown]
 
-**Private endpoints:** [Confirmed / Unknown]
+**Private endpoints:** [Describe if found, otherwise note as unknown]
 
-**VPN requirement:** [Confirmed / Not found]
+**VPN requirement:** [Describe if found, otherwise note as not found]
 
-**Security groups / firewall rules:** [Confirmed from IaC / Unknown]
+**Security groups / firewall rules:** [Describe if found in IaC, otherwise note as unknown]
 
 ---
 
 ## Secrets and Environment Variables
 
-| Secret / Env Var                                   | Found | Where it lives                | Issue |
-| -------------------------------------------------- | ----- | ----------------------------- | ----- |
-| [Confirmed from .env.example / CI config / source] | Yes   | [e.g. SSM / .env / hardcoded] |       |
+| Secret / Env Var | Found | Where it lives                | Issue |
+| ---------------- | ----- | ----------------------------- | ----- |
+| [Name]           | Yes   | [e.g. SSM / .env / hardcoded] |       |
 
-**Issue:** [Any hardcoded secrets, missing rotation, or secrets committed to repo]
+**Issues:** [Any hardcoded secrets, missing rotation, or secrets committed to repo]
 
 ---
 
@@ -762,9 +760,9 @@ Deployment posture as found in the codebase and infrastructure config. Gaps flag
 
 [For long-running services only. For CLI tools and batch jobs: omit — they succeed or fail, they do not expose health endpoints.]
 
-**Health endpoint found:** [Confirmed: source / Not found]
+**Health endpoint found:** [Source file, or note as not found]
 
-**What it checks:** [Confirmed / Unknown]
+**What it checks:** [Describe if found, otherwise note as unknown]
 
 ---
 
@@ -794,9 +792,9 @@ Inferred from route handlers, state machine logic, and entity status fields.
 
 ## Actors and their actions
 
-| Actor                                       | Actions | Confirmed          |
-| ------------------------------------------- | ------- | ------------------ |
-| [Inferred from auth roles / route handlers] |         | Confirmed: src/... |
+| Actor                                       | Actions |
+| ------------------------------------------- | ------- |
+| [Inferred from auth roles / route handlers] |         |
 
 ---
 
@@ -806,10 +804,10 @@ Inferred from route handlers, state machine logic, and entity status fields.
 
 ## Valid Transitions by Actor
 
-| Entity | Actor | From | To  | Trigger | Confirmed |
-| ------ | ----- | ---- | --- | ------- | --------- |
+| Entity | Actor | From | To  | Trigger |
+| ------ | ----- | ---- | --- | ------- |
 
-**Issue:** [Any transitions found in code that look inconsistent or unguarded]
+**Issues:** [Any transitions found in code that look inconsistent or unguarded]
 ```
 
 ---
@@ -827,10 +825,10 @@ Endpoints found in the codebase. Inferred from route definitions.
 
 **Actor:** [Inferred from auth middleware]
 **Purpose:** [Inferred from handler name / logic]
-**Request:** [Confirmed from validation schema if present]
-**Response:** [Confirmed from response shape]
-**Auth required:** Yes / No [Confirmed: src/...]
-**Issue:** [Any missing auth, validation, or error handling]
+**Request:** [From validation schema if present]
+**Response:** [From response shape]
+**Auth required:** Yes / No
+**Issues:** [Any missing auth, validation, or error handling]
 
 ---
 ```
@@ -846,9 +844,9 @@ Libraries and tools found in the codebase, with notes on how they're used.
 
 ## [Concern — e.g. Validation, ORM, Auth, HTTP Framework, Testing]
 
-**Library in use:** [Confirmed: package.json / go.mod / pyproject.toml]
+**Library in use:** [From package.json / go.mod / pyproject.toml]
 
-**How it's used:** [Confirmed from source]
+**How it's used:** [Describe from source]
 
 **Notes:** [Any issues with how it's being used, or alternatives worth considering]
 
@@ -868,7 +866,7 @@ What has been built, what's partial, and what's missing. Recommended next steps.
 
 [Summarise the slices that appear complete based on code found]
 
-- [Feature / layer]: [Confirmed: src/...] — assessment of completeness
+- [Feature / layer]: [src/...] — assessment of completeness
 
 ---
 
