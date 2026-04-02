@@ -186,15 +186,17 @@ Then generate each file as follows.
 
 ## Domain Model
 
-## D1: [First decision]
+### D1: [First decision]
 
-**Decision:** TBD
+**Decision:** —
 
-**Alternatives considered:**
+**Context:** —
 
-[If this decision involves a formula, calculation, or algorithm choice, show a worked example proving why the chosen approach produces the correct result and why alternatives do not.]
+**Alternatives considered:** —
 
-**Why:**
+**Why:** —
+
+**Open:** [What needs to be resolved before this decision can be made]
 
 ---
 ```
@@ -258,27 +260,37 @@ Infrastructure-level decisions — separate from domain/workflow decisions in `0
 
 ### [Protocol / Transport — e.g. REST, WebSockets, SSE, gRPC]
 
-**Decision:** TBD
+**Decision:** —
 
-**Alternatives considered:**
+**Context:** —
 
-**Why:**
+**Alternatives considered:** —
+
+**Why:** —
 
 ---
 
 ### [Caching strategy — if applicable]
 
-**Decision:** TBD
+**Decision:** —
 
-**Why:**
+**Context:** —
+
+**Alternatives considered:** —
+
+**Why:** —
 
 ---
 
 ### [Messaging / async — if applicable]
 
-**Decision:** TBD
+**Decision:** —
 
-**Why:**
+**Context:** —
+
+**Alternatives considered:** —
+
+**Why:** —
 
 ---
 
@@ -307,11 +319,13 @@ Infrastructure-level decisions — separate from domain/workflow decisions in `0
 
 ### Authentication — who are you?
 
-**Decision:** TBD
+**Decision:** —
 
-**Alternatives considered:**
+**Context:** —
 
-**Why:**
+**Alternatives considered:** —
+
+**Why:** —
 
 ---
 
