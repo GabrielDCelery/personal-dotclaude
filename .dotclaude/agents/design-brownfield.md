@@ -68,6 +68,17 @@ This affects how `04-entities.md`, `05-architecture.md`, and `09-deployment.md` 
 
 Look for any core domain rules, metrics, or calculations implemented in the code — especially anything non-obvious or with multiple plausible interpretations. These belong in `00-domain.md` with a worked example.
 
+**Design decisions:**
+
+For every non-trivial decision found in the codebase — type choices, encoding strategies, algorithm choices, data model shapes, auth approaches — aim to produce a decision entry that reads like the reasoning was documented by the original author. That means:
+
+- State the decision as a concrete implementation behaviour, not just "we chose X"
+- Explain the domain context that makes the decision non-obvious (why would someone reach for the wrong alternative?)
+- List the realistic alternatives and their specific trade-offs
+- Explain why the chosen option fits better given those constraints
+
+Infer context from: variable names, comments, test cases, domain terminology, the shape of the data, how it flows through the system. A decision with no comments in code can still have a clear rationale if the domain is understood.
+
 Once discovery is complete, synthesise findings before generating any files.
 
 ---
@@ -290,17 +301,21 @@ Decisions inferred from the codebase. Each decision should be verified and confi
 
 ## Domain Model
 
-### D1: [Decision]
+### D1: [Decision title]
 
-**Decision:** [What was found and where]
+**Decision:** [Concise statement of what was decided — implementation behaviour, not intent. E.g. "Keys are stored and compared as raw strings. Leading zeros are preserved. No numeric parsing is performed."]
 
-**Reasoning documented:** Yes / No
+**Context:** [Domain or business context that explains why this decision matters — what invariant is being preserved, what failure mode is being avoided. E.g. "UDPRN is a Royal Mail identifier for a unique delivery point — it is an 8-digit code, not a number. Parsing as integer would silently strip the leading zero, corrupting the key."]
 
-**Why (if known):**
+**Alternatives considered:**
 
-[If this decision involves a formula, calculation, or algorithm choice, include a worked example showing why the chosen approach produces the correct result — derive it from tests or source logic if no comment explains it.]
+- [Option A] — [trade-off summary]; chosen
+- [Option B] — [trade-off summary]; ruled out
+- [Option C] — [trade-off summary]; ruled out
 
-**Open:** [What's unknown about this decision — why was this chosen over alternatives?]
+**Why:** [Reasoning that connects the decision to the context — why the chosen option fits better than the alternatives given the constraints]
+
+**Open:** [Only include if something genuinely cannot be determined from the code]
 
 ---
 ```
