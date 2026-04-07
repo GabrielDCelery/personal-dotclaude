@@ -102,7 +102,7 @@ Generate files in order: `00-domain.md` first, then the rest.
 - `docs/04-entities.md` — entities inferred from models, migrations, and schema
 - `docs/05-architecture.md` — infrastructure, scalability, and auth as found
 - `docs/06-api.md` — APIs exposed and consumed; note "no API exposed" for CLI tools
-- `docs/07-testing.md` — what should be tested and why, based on pipeline risks found
+- `docs/07-testing.md` — what should be tested and why, based on risks found in the codebase
 - `docs/08-observability.md` — logging and metrics strategy based on what the system does
 - `docs/09-security.md` — security posture as found, gaps flagged
 - `docs/10-development.md` — local setup instructions
@@ -461,7 +461,7 @@ Decisions inferred from the codebase. Code tells you what was chosen, not always
 ```markdown
 # Security
 
-Attack vectors and mitigations for this system. Network access and secrets configuration are in `11-deployment.md`.
+Attack vectors and mitigations for this system. Network access is covered in `11-deployment.md`.
 
 ---
 
