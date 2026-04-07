@@ -42,7 +42,7 @@ Scan the project systematically before writing anything. Collect evidence across
 
 - Top-level directory layout — infer layering, domain boundaries, service split
 - Key source files — routing, models/entities, auth middleware, DB clients, queue consumers
-- Test files — what's tested, what's not, testing approach
+- Test files — what exists, what's absent, which areas have no coverage
 
 **Database and data:**
 
@@ -62,7 +62,7 @@ Determine the system type from the evidence collected:
 - **Library**: no entry point, exported API surface only
 - **Data pipeline**: batch-oriented, consumes and emits datasets, may have no HTTP layer
 
-This affects how `04-entities.md`, `05-architecture.md`, and `09-deployment.md` are populated. Note the inferred system shape before generating any files.
+This affects how `04-entities.md`, `05-architecture.md`, and `11-deployment.md` are populated. Note the inferred system shape before generating any files.
 
 **Domain concepts:**
 
@@ -85,16 +85,9 @@ Once discovery is complete, synthesise findings before generating any files.
 
 ### Phase 2 — Generate docs
 
-Generate the same scaffold as a greenfield project, but populated with findings. Use these markers in `00-audit.md` only:
+Generate the docs scaffold populated with findings. Write in plain prose — no confidence markers, no source citations except in `09-security.md` and `14-todo.md` where a file reference is actionable.
 
-- `[Confirmed: <source>]` — directly observed in a specific file
-- `[Inferred]` — reasoned from indirect evidence (e.g. dependency implies pattern)
-- `[Unknown]` — could not be determined from the codebase alone
-- `[Issue: <description>]` — something that looks inconsistent, undocumented, or problematic
-
-All other files should present findings as plain prose without inline markers — evidence citations and confidence levels belong in `00-audit.md`.
-
-Generate files in this order: `00-audit.md` first (summary of everything), `00-domain.md` second, then the rest.
+Generate files in order: `00-domain.md` first, then the rest.
 
 ---
 
@@ -102,82 +95,25 @@ Generate files in this order: `00-audit.md` first (summary of everything), `00-d
 
 ### Always created
 
-- `docs/00-audit.md` — top-level findings: what was found, what's missing, what looks problematic
 - `docs/00-domain.md` — domain vocabulary, core concepts, and worked examples reverse-engineered from the codebase
 - `docs/01-requirements.md` — functional requirements inferred from code and existing docs
 - `docs/02-decisions.md` — design decisions already made, inferred from codebase
 - `docs/03-data-consumers.md` — who consumes what data, inferred from queries and API endpoints
 - `docs/04-entities.md` — entities inferred from models, migrations, and schema
 - `docs/05-architecture.md` — infrastructure, scalability, and auth as found
-- `docs/06-testing.md` — what is tested, what isn't, testing approach as found
-- `docs/07-observability.md` — logging, metrics, alerting as found or absent
-- `docs/08-security.md` — security posture as found, gaps flagged
-- `docs/09-deployment.md` — deployment strategy, environments, migrations, infrastructure as found
-- `docs/10-sequence.md` — what's built, what's partial, what's missing, recommended next steps
-
-### Created only if relevant to the codebase
-
-- `docs/11-behaviours.md` — if multiple actors or entities with lifecycle states are found
-- `docs/12-api.md` — if an API is exposed
+- `docs/06-api.md` — APIs exposed and consumed; note "no API exposed" for CLI tools
+- `docs/07-testing.md` — what should be tested and why, based on pipeline risks found
+- `docs/08-observability.md` — logging and metrics strategy based on what the system does
+- `docs/09-security.md` — security posture as found, gaps flagged
+- `docs/10-development.md` — local setup instructions
+- `docs/11-deployment.md` — deployment strategy, environments, infrastructure as found
+- `docs/12-operations.md` — how to run the system; commands, credentials, configuration
 - `docs/13-tooling.md` — key libraries and tools in use, with notes on how they're used
+- `docs/14-todo.md` — outstanding issues, gaps, and recommended next steps
 
 ---
 
 ## File templates
-
-### `docs/00-audit.md`
-
-```markdown
-# Design Audit
-
-Summary of findings from codebase discovery. Read this first.
-
-## What Was Found
-
-**Language / Framework:** [Confirmed: source]
-**Database:** [Confirmed / Inferred]
-**Auth approach:** [Confirmed / Inferred / Unknown]
-**Hosting / Infrastructure:** [Confirmed / Inferred / Unknown]
-**CI/CD:** [Confirmed / Unknown]
-**Test coverage:** [Confirmed: rough assessment]
-
----
-
-## What Is Documented
-
-[List what already exists in README, docs/, CLAUDE.md etc.]
-
----
-
-## What Is Missing
-
-[Things that exist in code but have no documented reasoning]
-
-- [ ] [e.g. No explanation of why X library was chosen]
-- [ ] [e.g. Auth approach exists but no documented threat model]
-- [ ] [e.g. No documented entity relationships]
-
----
-
-## Issues Found
-
-[Inconsistencies, undocumented assumptions, tech debt signals]
-
-| Issue                                          | Location        | Severity | Notes |
-| ---------------------------------------------- | --------------- | -------- | ----- |
-| [e.g. No error handling on external API calls] | `src/clients/`  | Medium   |       |
-| [e.g. Hardcoded config values]                 | `src/config.ts` | High     |       |
-
----
-
-## Confidence Notes
-
-[Where inferences are weak — things that should be verified with the team]
-
-- [e.g. DB choice inferred from ORM dependency — confirm it's PostgreSQL not MySQL]
-```
-
----
 
 ### `docs/00-domain.md`
 
@@ -186,42 +122,42 @@ Summary of findings from codebase discovery. Read this first.
 
 ## What This [System / Tool / Service] Does
 
-[One paragraph describing the problem being solved and the domain it operates in — inferred from code, existing docs, and naming conventions. Not what the system does technically — what it means in the real world and why it exists.]
+[One paragraph: the real-world problem this solves and the domain it operates in. Not what the system does technically — what it means in the world and why it exists.]
 
 ---
 
 ## Core Concepts
 
-[Domain terms found in the codebase — type names, function names, config keys, comments. Define each once here so the rest of the docs don't need to.]
+[Domain and platform concepts a reader needs to understand before the rest of the docs make sense. Group by theme if there are several. Define each term once here so the rest of the docs don't need to.]
 
-### [Concept — inferred from naming / logic]
+### [Concept]
 
 [One paragraph. What is this thing? Why does it exist? What would go wrong if it were misunderstood.]
 
 ---
 
-## [Only if the system computes metrics, applies rules, or makes calculations] Key Rules and Metrics
+## Key Rules and Metrics
 
-[For each non-obvious rule or metric found in the code, explain what it means and show a worked example. Flag any rules where the implementation could be interpreted multiple ways.]
+[Only if the system computes metrics, applies rules, or makes non-obvious calculations. For each, explain what it means and show a worked example.]
 
-### [Metric or rule name]
+### [Rule or metric name]
 
-[One sentence: what this measures or enforces and why it matters in this domain.]
+[One sentence: what this measures or enforces and why it matters.]
 
 **Example:**
 ```
 
-[Worked example — concrete inputs, step-by-step derivation, expected output — derived from tests or source logic]
+[Concrete inputs → step-by-step → expected output]
 
 ```
 
-**Why not [alternative]:** [One sentence on why the obvious alternative is wrong or less appropriate]
+**Why not [alternative]:** [One sentence on why the obvious alternative doesn't fit.]
 
 ---
 
 ## Open Questions
 
-- [Things that cannot be determined from code alone — domain rules that look arbitrary, naming that is ambiguous, calculations with no comment explaining why]
+- [Things that cannot be determined from the codebase — domain rules that look arbitrary, terms that are ambiguous, or calculations with no clear rationale]
 ```
 
 ---
@@ -235,44 +171,36 @@ Inferred from codebase.
 
 ## Functional Requirements
 
-### [Feature area — inferred from source structure or routes]
+### [Feature area]
 
-- FR1: [Inferred from route/handler/model]
+- FR1: [What the system does — one sentence per requirement]
 - FR2: ...
 
 ---
 
 ## Non-Functional Requirements
 
-### Performance
+[Only include sections where something was found or can be inferred. Skip sections with nothing to say.]
 
-- [Describe targets if found in config/docs, otherwise note as undocumented]
+### Performance
 
 ### Scalability
 
-- [Describe if infrastructure gives clues, otherwise note as undocumented]
-
 ### Availability
 
-- [Describe if SLAs are documented, otherwise note as undocumented]
-
 ### Data Retention
-
-- [Describe if found in migration history or config]
 
 ---
 
 ## Design Clarifications
 
-[Leave empty — populate as decisions are reviewed and confirmed]
+- [Anything about requirements that is unclear or ambiguous from the code alone]
 
 ---
 
 ## Open Questions
 
-[Things that cannot be determined from code and need business context]
-
-- OQ1: ...
+- OQ1: [Things that cannot be determined from code and need business context]
 ```
 
 ---
@@ -282,15 +210,15 @@ Inferred from codebase.
 ```markdown
 # Design Decisions
 
-Decisions inferred from the codebase. Each decision should be verified and confirmed with the team — code tells you what was chosen, not always why.
+Decisions inferred from the codebase. Code tells you what was chosen, not always why — verify reasoning with the team.
 
 ## Summary
 
 **Domain Model**
 
-| #   | Question            | Decision         |
-| --- | ------------------- | ---------------- |
-| D1  | [Inferred decision] | [What was found] |
+| #   | Question | Decision |
+| --- | -------- | -------- |
+| D1  |          |          |
 
 **Infrastructure**
 
@@ -303,19 +231,26 @@ Decisions inferred from the codebase. Each decision should be verified and confi
 
 ### D1: [Decision title]
 
-**Decision:** [Concise statement of what was decided — implementation behaviour, not intent. E.g. "Keys are stored and compared as raw strings. Leading zeros are preserved. No numeric parsing is performed."]
+**Decision:** [What was decided — concrete behaviour, not intent. E.g. "Keys are stored and compared as raw strings. Leading zeros are preserved."]
 
-**Context:** [Domain or business context that explains why this decision matters — what invariant is being preserved, what failure mode is being avoided. E.g. "UDPRN is a Royal Mail identifier for a unique delivery point — it is an 8-digit code, not a number. Parsing as integer would silently strip the leading zero, corrupting the key."]
+**Context:** [Why this decision matters — what invariant is being preserved or what failure mode is being avoided.]
 
 **Alternatives considered:**
 
-- [Option A] — [trade-off summary]; chosen
-- [Option B] — [trade-off summary]; ruled out
-- [Option C] — [trade-off summary]; ruled out
+- [Option A] — [trade-off]; chosen
+- [Option B] — [trade-off]; ruled out
 
-**Why:** [Reasoning that connects the decision to the context — why the chosen option fits better than the alternatives given the constraints]
+**Why:** [Why the chosen option fits better given the constraints]
 
-**Open:** [Only include if something genuinely cannot be determined from the code]
+**Open:** [Only if something genuinely cannot be determined from the code]
+
+---
+
+## Infrastructure
+
+### D[n]: [Decision title]
+
+[Same structure as above]
 
 ---
 ```
@@ -327,14 +262,13 @@ Decisions inferred from the codebase. Each decision should be verified and confi
 ```markdown
 # Data Consumers
 
-Inferred from API endpoints, queries, and service boundaries found in the codebase.
+## [Actor or system]
 
-## [Actor or system — inferred from routes/handlers]
+**What they need:** [What data or output this consumer depends on]
 
-**What they need:** [Inferred from queries or response shapes]
-**Why:** [Describe if documented, otherwise note as undocumented]
-**Freshness requirement:** [Inferred from caching config, or note as not found]
-**Key queries:** [Describe the main queries or endpoints]
+**Why:** [Why they need it — what breaks or degrades without it]
+
+**Freshness:** [How current the data needs to be, and what drives that cadence]
 
 ---
 ```
@@ -346,21 +280,13 @@ Inferred from API endpoints, queries, and service boundaries found in the codeba
 ```markdown
 # Entities
 
-[If this is a **stateless system** (CLI tool, batch job, library) with no persistent schema: document the layer-boundary interfaces and the types that flow between them — inferred from interface definitions, structs, and function signatures. There are no database entities. Skip field tables and use interface/struct definitions relevant to the implementation language.]
+## [Entity name]
 
-[If this is a **stateful system** (web service, API, database-backed app): document entity definitions, fields, and relationships inferred from models, migrations, and schema files.]
+[One sentence on what this represents in the context of this system.]
 
-## [Entity or Interface — inferred from model/migration/interface definition]
+[For **external entities** (third-party API, SDK): note any non-obvious behaviour — type mismatches, naming that could mislead, invariants the system assumes. Link to the external reference rather than reproducing field definitions.]
 
-[One sentence on what this entity/interface represents — inferred from field names, method signatures, and relationships]
-
-| Field        | Type | Notes |
-| ------------ | ---- | ----- |
-| [Field name] |      |       |
-
-**Relationships:** [Inferred from foreign keys, ORM associations, or interface dependencies]
-
-**Open:** [What's unclear about this entity's purpose or boundaries]
+[For **internal entities** (DB models, domain objects): explain why the entity exists and what it owns. Note any non-obvious design choices. No field tables — the schema is the authoritative source for field definitions.]
 
 ---
 ```
@@ -372,257 +298,223 @@ Inferred from API endpoints, queries, and service boundaries found in the codeba
 ```markdown
 # Architecture
 
-Infrastructure and architectural decisions as found in the codebase.
+## System Shape
+
+[What kind of system this is — pipeline, web service, CLI tool, library — and its main components. One short paragraph.]
+
+---
+
+## Flow
+
+[A text-based diagram showing how data or requests move through the system — pipeline stages, request/response cycle, or component interactions.]
+
+```
+[Source / Client]
+       ↓
+[Stage / Layer]
+       ↓
+[Output / Response]
+```
 
 ---
 
 ## Infrastructure
 
-### Protocol / Transport
+[Key infrastructure resources. Use tables where there are multiple resources of the same type. Only include sections relevant to what was found.]
 
-**Decision:** [e.g. REST — inferred from router setup]
+### [Resource group — e.g. Storage, Compute, Messaging]
 
-**Alternatives documented:** No / Yes
-
----
-
-### Caching
-
-**Decision:** [Describe what was found, or note as not found]
+| Resource | Name pattern | Purpose |
+| -------- | ------------ | ------- |
 
 ---
 
-### Messaging / Async
+## Protocol and Transport
 
-**Decision:** [Describe what was found, or note as not found]
+[For web services and APIs: describe the protocol (REST, gRPC, GraphQL, WebSocket), transport, and any relevant conventions. Skip for CLI tools and pipelines with no network interface.]
+
+---
+
+## Caching
+
+[Describe caching strategy if found. Skip if not present.]
 
 ---
 
 ## Scalability
 
-### Read/Write Split
+### Known Bottlenecks
 
-[Describe if found in DB config, otherwise note as not found]
-
-### Known Hotspots
-
-[Inferred from code — any obvious N+1 queries, missing indexes, large transactions]
-
-- [Description and source file]
-
-### What Is Not Addressed
-
-[Things that look unaddressed given the apparent scale requirements]
+- [Serial processing, missing parallelism, N+1 queries, no checkpoint/resume — anything structurally limiting throughput]
 
 ---
 
 ## Auth
 
-### Authentication
-
-**Decision:** [e.g. JWT — describe what was found and where]
-
-**Token expiry / refresh:** [Describe if found, otherwise note as not found]
+[How the system authenticates to external services and how callers authenticate to it. For pipeline tools with no user-facing auth, say so explicitly. Cover both authentication and authorisation if roles/permissions are present.]
 
 ---
-
-### Authorisation
-
-**Decision:** [e.g. RBAC — describe what was found]
-
-- **Role:** [Roles found]
-- **Ownership:** [Describe if found]
-- **Relationship:** [Describe if found]
-
-**Issues:** [Any auth gaps found — e.g. missing ownership checks on certain endpoints]
-
----
-
-## Privacy Boundary
-
-[Only if the system handles personal, sensitive, or regulated data — infer from entity field names, PII-related variable names, or domain context. Skip for internal tooling with no PII.]
-
-**What enters the system:** [From connectors, API inputs, or user-facing routes]
-
-**What never leaves each layer:** [Inferred from layer boundaries — e.g. raw records never passed to output layer]
-
-**What the output contains:** [From response shapes or output writer implementations]
-
-**Issues:** [Any place where individual values leak across a layer boundary that should be aggregate-only]
 ```
 
 ---
 
-### `docs/06-testing.md`
+### `docs/06-api.md`
 
 ```markdown
-# Testing
+# API
 
-Testing approach as found in the codebase.
+## Exposed
 
-## What Is Tested
+[If this system exposes no API — e.g. a CLI tool or batch pipeline — say so here and link to operations.md for how to invoke it.]
 
-- [e.g. Unit tests for domain logic — tests/unit/]
-- [e.g. Integration tests for DB layer — tests/integration/]
+[If this system exposes an API, document endpoints grouped by feature area.]
 
----
+### [Feature area]
 
-## What Is Not Tested
+#### [METHOD] /[path]
 
-- [e.g. No tests for auth middleware]
-- [e.g. No E2E tests]
-
----
-
-## Testing Strategy
-
-### Framework / Runner
-
-[e.g. Jest — found in package.json]
-
-### Test Structure
-
-[Describe what's there]
+**Actor:** [Who calls this]
+**Purpose:** [What it does]
+**Request:** [Body / params if notable]
+**Response:** [Response shape if notable]
+**Auth required:** Yes / No
+**Issues:** [Any missing auth, validation, or error handling]
 
 ---
 
-## Key Scenarios
+## Consumed
 
-| Scenario                   | Type        | Covered  | Notes |
-| -------------------------- | ----------- | -------- | ----- |
-| [Happy path for core flow] | E2E         | No / Yes |       |
-| [Failure mode]             | Integration | No / Yes |       |
+[External APIs this system calls.]
+
+### [Service name]
+
+- **Base URL:**
+- **Auth:**
+- **Usage:** [Read-only / read-write, what it's used for]
+- **Endpoints used:**
+  - `[METHOD] /[path]` — [what it does]
 
 ---
-
-## Open Questions
-
-- [e.g. No load or performance tests — are there targets?]
 ```
 
 ---
 
-### `docs/07-observability.md`
+### `docs/07-testing.md`
+
+```markdown
+# Testing Strategy
+
+[Framework found: e.g. Jest (`package.json`). Skip if nothing found.]
+
+[One section per risk area. For each: explain what can go wrong if it's untested, and what tests should verify. Focus on areas where a silent failure would be hard to detect downstream.]
+
+## [Risk area — e.g. Pagination, Auth, Data Filtering]
+
+[One paragraph: what this component does, how it can fail silently, and what tests should verify. Be specific about edge cases and failure modes.]
+
+---
+```
+
+---
+
+### `docs/08-observability.md`
 
 ```markdown
 # Observability
 
-Logging, metrics, and alerting as found in the codebase.
+[One sentence framing: what kind of system this is and what observability decisions follow from that — e.g. batch pipeline vs always-on service.]
 
 ---
 
 ## Logging
 
-**What's in place:** [Library used, log levels found]
+### What needs to be logged
 
-**Gaps:**
+[Group by stage or event. For each, explain why the signal matters — what becomes invisible or undiagnosable without it.]
 
-- [e.g. No structured logging — plain strings only]
-- [e.g. Errors swallowed in catch blocks without logging]
+### What should not be logged
+
+- [Credentials, secrets, or sensitive content that must never appear in log output]
 
 ---
 
 ## Metrics
 
-**What's in place:** [Describe if found, otherwise note as not found]
+[Signals that matter per run or per request. Use a table if there are several.]
 
-**Gaps:** [e.g. No metrics instrumentation found]
-
----
-
-## Alerting
-
-**What's in place:** [Describe if found, otherwise note as not found]
+| Signal | Why it matters |
+| ------ | -------------- |
 
 ---
 
-## Tracing
+## Traces
 
-**What's in place:** [Describe if found, otherwise note as not found]
+[Whether distributed tracing makes sense for this system. If not implemented, explain why and what would change that.]
 
 ---
-
-## Open Questions
-
-- [e.g. No observability infrastructure found — is this handled at the platform level?]
 ```
 
 ---
 
-### `docs/08-security.md`
+### `docs/09-security.md`
 
 ```markdown
 # Security
 
-Security posture as found in the codebase. Gaps flagged. Network access and secrets configuration are covered in `09-deployment.md`.
+Attack vectors and mitigations for this system. Network access and secrets configuration are in `11-deployment.md`.
 
 ---
 
 ## Threat Model
 
-**Documented:** Yes / No
-
-[If no threat model found, infer likely threats from the domain]
+[Describe the system's attack surface and key threat vectors — what an attacker could do and what the impact would be. Infer from the domain, the data the system handles, and the integrations it has.]
 
 ---
 
 ## User-Facing Security
 
-[Only if the system has human users — skip if pure backend service]
+[Only if the system has human users. Skip for pipelines and internal tooling.]
 
 ### Authentication
 
-**Approach found:** [e.g. JWT / session / OAuth — source file]
-
-**Token expiry / refresh:** [Describe if found, otherwise note as not found]
-
-**Revocation strategy:** [Describe if found, otherwise note as not found]
+[Approach found, token expiry, revocation strategy.]
 
 ### Common Web Vulnerabilities
 
-| Concern         | Status                  | Notes |
-| --------------- | ----------------------- | ----- |
-| XSS             | [Mitigated / Not found] |       |
-| CSRF            | [Mitigated / Not found] |       |
-| Mass assignment | [Mitigated / Not found] |       |
+| Concern         | Status | Notes |
+| --------------- | ------ | ----- |
+| XSS             |        |       |
+| CSRF            |        |       |
+| Mass assignment |        |       |
 
 ---
 
 ## Service / Backend Security
 
-[Only if the system exposes an API or integrates with external services]
-
 ### API Authentication
 
-**Approach found:** [Describe if found, otherwise note as not found]
-
-### Rate Limiting
-
-**In place:** [Describe if found — note if public-facing endpoints have no rate limiting]
+[How the system authenticates to external services, and how callers authenticate to it. Note the blast radius if credentials are compromised.]
 
 ### Input Validation
 
-**In place:** [Library used if found — note if no boundary validation]
+[What is validated at system boundaries — env vars, API responses, CLI args, request bodies. Call out any gaps where invalid or malicious input passes through unchecked. Cite specific file and line for actionable gaps.]
+
+### Rate Limiting
+
+[Whether rate limiting is in place. For public-facing APIs, note any unprotected endpoints.]
 
 ---
 
 ## Data Classification
 
-[Inferred from entities and field names]
-
-| Data              | Sensitivity | In codebase | Notes                   |
-| ----------------- | ----------- | ----------- | ----------------------- |
-| [e.g. user email] | PII         | Yes         | Confirm masking in logs |
+| Data | Sensitivity | In codebase | Notes |
+| ---- | ----------- | ----------- | ----- |
 
 ---
 
 ## PII and Data Privacy
 
-**PII found:** [Describe fields found]
-
-**Masking in logs:** [Describe if found — note if PII fields are logged]
-
-**Retention policy:** [Describe if found, otherwise note as undocumented]
+[What PII the system handles, whether it's masked in logs, and what the retention policy is. Note any places where PII could leak.]
 
 ---
 
@@ -630,293 +522,200 @@ Security posture as found in the codebase. Gaps flagged. Network access and secr
 
 ### In Transit
 
-**TLS enforced:** [Describe if confirmed, otherwise note as unverified]
+[HTTPS / TLS status for all external communication.]
 
 ### At Rest
 
-**DB encryption:** [Describe if found in infra config, otherwise note as unknown]
-
----
-
-## Secrets Management
-
-**Approach found:** [e.g. env vars / SSM / hardcoded — flag if hardcoded]
-
----
-
-## Issues Found
-
-| Issue                                     | Location             | Severity |
-| ----------------------------------------- | -------------------- | -------- |
-| [e.g. API key hardcoded]                  | `src/config.ts`      | High     |
-| [e.g. No rate limiting on auth endpoints] | `src/routes/auth.ts` | Medium   |
+[DB and storage encryption — from infra config, or note as unverified.]
 
 ---
 
 ## Open Questions
 
-- [Domain-specific compliance concerns that could not be determined from code]
+- [Compliance or classification concerns that cannot be determined from the codebase]
 ```
 
 ---
 
-### `docs/09-deployment.md`
+### `docs/10-development.md`
+
+```markdown
+# Development
+
+Local setup for working on the project.
+
+## Setup
+
+```sh
+git clone <repo>
+cd <repo>
+[install dependencies]
+[any local config — e.g. copy .env.example]
+```
+
+## Running locally
+
+[How to start the service or run the tool locally. Note if a real external dependency is required — e.g. live API credentials, cloud services — and link to operations.md if so.]
+
+## Tests
+
+```sh
+[test command]
+```
+
+## Linting
+
+```sh
+[lint command]
+```
+```
+
+---
+
+### `docs/11-deployment.md`
 
 ```markdown
 # Deployment
 
-Deployment posture as found in the codebase and infrastructure config. Gaps flagged. Network access and secrets configuration are here — the _approach_ to secrets is in `08-security.md`.
-
-[**If this is a CLI tool or batch job** — omit Environments, Migrations, Network Access, and Health Checks. Use the Packaging section instead of Deployment Target.]
+[One sentence on how deployment works — manual, CI/CD, what tooling is used.]
 
 ---
 
-## Packaging
+## Deploying
 
-[For CLI tools and batch jobs — skip for web services.]
-
-**Build artefact:** [e.g. compiled binary, Docker image — source: Dockerfile / Makefile / CI config]
-
-**Build approach:** [e.g. multi-stage Dockerfile / single-stage / native binary]
-
-**Distribution:** [e.g. image pushed to registry / binary attached to release / not found]
-
-**What is injected at runtime:** [Config file, data mounts, env vars — source: Dockerfile / CI / README]
-
-**Issues:** [Anything sensitive baked into the image, missing runtime injection pattern, or undocumented run instructions]
+```sh
+[deploy commands]
+```
 
 ---
 
-## Deployment Target
+## Infrastructure
 
-[For web services — skip for CLI tools.]
+**IaC:** [Tool and version — e.g. AWS CDK (TypeScript) `aws-cdk-lib` 2.x]
 
-**Hosting found:** [e.g. ECS / Lambda / VPS — source: Dockerfile / terraform / CI config]
+**Resources provisioned:**
 
-**Containerised:** [Yes — Dockerfile found / No / Not found]
-
-**Right-sized assessment:** [Is the current deployment target appropriate for the described scale? Flag if over- or under-engineered]
+| Resource | Type | Name pattern |
+| -------- | ---- | ------------ |
 
 ---
 
 ## Environments
 
-[For web services. For CLI tools: omit — a stateless tool has no environment topology.]
-
-| Environment | Found           | Notes |
-| ----------- | --------------- | ----- |
-| local       | Yes / Not found |       |
-| staging     | Yes / Not found |       |
-| prod        | Yes / Not found |       |
-
-**Environment parity gaps:** [Any differences between local and prod likely to cause bugs — e.g. local uses SQLite, prod uses PostgreSQL]
+| Environment | Status | Notes |
+| ----------- | ------ | ----- |
+| dev         |        |       |
+| staging     |        |       |
+| prod        |        |       |
 
 ---
 
 ## CI/CD
 
-**Pipeline found:** [e.g. GitHub Actions — source: .github/workflows / Not found]
-
-**Pipeline steps:** [Describe steps found in CI config]
-
-**Deploy trigger:** [e.g. merge to main / manual / Not found]
-
----
-
-## Infrastructure Provisioning
-
-**IaC found:** [e.g. Terraform / CDK / Ansible / None found]
-
-**Resources provisioned:** [Describe from IaC files, or note as unknown]
-
-**Issues:** [Anything manually provisioned that should be in IaC]
+[Pipeline found and what it does — or note as not found.]
 
 ---
 
 ## Data Migrations
 
-[For stateful systems with a schema. For CLI tools and stateless batch jobs: omit.]
-
-**Migration tooling found:** [e.g. Flyway / golang-migrate / custom / Not found]
-
-**How migrations run:** [e.g. automatically on deploy / manually / not documented]
-
-**Zero-downtime approach:** [Describe if found — note if breaking changes could be deployed without a phased migration]
-
-**Rollback strategy:** [Describe if found, otherwise note as not found]
+[For stateful systems only. Migration tooling, how migrations run, zero-downtime approach, rollback strategy. Skip for stateless pipelines and CLI tools.]
 
 ---
 
 ## Network Access
 
-[For web services and APIs. For CLI tools: omit — network access is the caller's concern.]
-
-**Public endpoints:** [Describe if found in infra config or CI, otherwise note as unknown]
-
-**Private endpoints:** [Describe if found, otherwise note as unknown]
-
-**VPN requirement:** [Describe if found, otherwise note as not found]
-
-**Security groups / firewall rules:** [Describe if found in IaC, otherwise note as unknown]
-
----
-
-## Secrets and Environment Variables
-
-| Secret / Env Var | Found | Where it lives                | Issue |
-| ---------------- | ----- | ----------------------------- | ----- |
-| [Name]           | Yes   | [e.g. SSM / .env / hardcoded] |       |
-
-**Issues:** [Any hardcoded secrets, missing rotation, or secrets committed to repo]
+[Inbound and outbound endpoints. VPC, security groups if relevant. For CLI tools with no inbound surface, say so.]
 
 ---
 
 ## Health Checks
 
-[For long-running services only. For CLI tools and batch jobs: omit — they succeed or fail, they do not expose health endpoints.]
-
-**Health endpoint found:** [Source file, or note as not found]
-
-**What it checks:** [Describe if found, otherwise note as unknown]
+[For long-running services only. Health endpoint and what it checks. Skip for CLI tools and batch jobs.]
 
 ---
-
-## Issues Found
-
-| Issue                                      | Location | Severity |
-| ------------------------------------------ | -------- | -------- |
-| [e.g. No staging environment]              |          | Medium   |
-| [e.g. Secrets in .env committed to repo]   | `.env`   | High     |
-| [e.g. No rollback strategy for migrations] |          | Medium   |
-
----
-
-## Open Questions
-
-- [Things that could not be determined — e.g. is there a maintenance window for deployments? who has prod access?]
 ```
 
 ---
 
-### `docs/11-behaviours.md` (if applicable)
+### `docs/12-operations.md`
 
 ```markdown
-# Behaviours
+# Operations
 
-Inferred from route handlers, state machine logic, and entity status fields.
-
-## Actors and their actions
-
-| Actor                                       | Actions |
-| ------------------------------------------- | ------- |
-| [Inferred from auth roles / route handlers] |         |
+[One sentence: what's needed to operate this system — credentials, env vars, no local mock if applicable.]
 
 ---
 
-## Entity Lifecycle States
+## Credentials
 
-[Inferred from status fields, state machine libraries, or transition logic in handlers]
+[How to authenticate — AWS profile, service account, vault tool, etc.]
 
-## Valid Transitions by Actor
+---
 
-| Entity | Actor | From | To  | Trigger |
-| ------ | ----- | ---- | --- | ------- |
+## Configuration
 
-**Issues:** [Any transitions found in code that look inconsistent or unguarded]
+[Env vars per service or component. One table per config surface.]
+
+### [Service or component]
+
+| Variable | Notes |
+| -------- | ----- |
+
+---
+
+## Running
+
+[The commands to operate the system, in order. Include brief inline comments where the sequence matters.]
+
+```sh
+[commands]
 ```
-
----
-
-### `docs/12-api.md` (if applicable)
-
-```markdown
-# API
-
-Endpoints found in the codebase. Inferred from route definitions.
-
-## [Feature area]
-
-### [METHOD] /[path]
-
-**Actor:** [Inferred from auth middleware]
-**Purpose:** [Inferred from handler name / logic]
-**Request:** [From validation schema if present]
-**Response:** [From response shape]
-**Auth required:** Yes / No
-**Issues:** [Any missing auth, validation, or error handling]
 
 ---
 ```
 
 ---
 
-### `docs/13-tooling.md` (if applicable)
+### `docs/13-tooling.md`
 
 ```markdown
 # Tooling
 
-Libraries and tools found in the codebase, with notes on how they're used.
+Key libraries and tools in use, with rationale for why they were chosen.
 
-## [Concern — e.g. Validation, ORM, Auth, HTTP Framework, Testing]
+---
 
-**Library in use:** [From package.json / go.mod / pyproject.toml]
+## [Concern — e.g. Validation, Logging, HTTP, ORM, Testing]
 
-**How it's used:** [Describe from source]
+**`[library]` [version] — chosen**
 
-**Notes:** [Any issues with how it's being used, or alternatives worth considering]
+[One paragraph: what it does, how it's used in this codebase, why it fits.]
+
+[Alternatives and why they were ruled out, if worth noting.]
 
 ---
 ```
 
 ---
 
-### `docs/10-sequence.md`
+### `docs/14-todo.md`
 
 ```markdown
-# Development Sequence
+# Todo
 
-What has been built, what's partial, and what's missing. Recommended next steps.
-
-## What's Built
-
-[Summarise the slices that appear complete based on code found]
-
-- [Feature / layer]: [src/...] — assessment of completeness
+| What | Severity |
+| ---- | -------- |
+| [Issue] | High / Medium / Low |
 
 ---
 
-## What's Partial
+### [Issue]
 
-[Things that exist but look incomplete — missing error handling, missing tests, missing docs]
+**Why:** [Impact if not addressed — what breaks, degrades, or stays unknown]
 
-| Area        | What's there | What's missing             |
-| ----------- | ------------ | -------------------------- |
-| [e.g. Auth] | Login + JWT  | Refresh tokens, revocation |
+**Done when:** [Concrete exit criterion — what the fix looks like]
 
 ---
-
-## What's Missing
-
-[Things implied by the domain or requirements but not found in code]
-
-- [e.g. No rate limiting]
-- [e.g. No background job for X]
-
----
-
-## Recommended Next Steps
-
-[Ordered by impact and dependency — what to address first and why]
-
-### 1. [Highest priority item]
-
-**Why first:** [Reasoning]
-**Done when:** [Exit criterion]
-
-### 2. [Next item]
-
-**Why here:**
-**Done when:**
 ```
 
 ---
@@ -924,8 +723,8 @@ What has been built, what's partial, and what's missing. Recommended next steps.
 ## Rules
 
 - Never invent findings — only report what was actually found in the codebase
-- Always cite the source file for confirmed findings
-- Mark inferences clearly — code shows what was chosen, not why
+- Write as if the docs were written by the original author — plain prose, no confidence markers, no inline source citations
+- Cite specific file and line only in `09-security.md` and `14-todo.md` where a reference is actionable
 - Flag issues without editorialising — describe the problem, not a verdict on the team
 - If the codebase is large, prioritise breadth over depth in discovery — a shallow scan of everything is more useful than a deep scan of one area
 - If something is clearly absent (no tests, no logging), say so explicitly rather than leaving it blank
