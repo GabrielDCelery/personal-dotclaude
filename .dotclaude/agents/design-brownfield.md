@@ -120,9 +120,15 @@ Generate files in order: `00-domain.md` first, then the rest.
 ```markdown
 # Domain Context
 
+## Introduction
+
+[One paragraph of plain prose that introduces the domain and its key concepts in context. Write it so that someone who knows nothing about the project finishes this paragraph understanding what the system is for and why each major concept exists. Introduce terms in the order a reader needs them — earlier concepts should make later ones land. Bold key terms on first use so they are easy to spot when scanning.]
+
+---
+
 ## What This [System / Tool / Service] Does
 
-[One paragraph: the real-world problem this solves and the domain it operates in. Not what the system does technically — what it means in the world and why it exists.]
+[One paragraph: the real-world problem this solves and the domain it operates in. Not what the system does technically — what it means in the world and why it exists. This section follows the Introduction so the reader already knows the vocabulary.]
 
 ---
 
@@ -172,6 +178,8 @@ Inferred from codebase.
 ## Functional Requirements
 
 ### [Feature area]
+
+[One paragraph introducing this feature area — why it exists, what problem it solves, and what constraints shape the requirements below. Do not restate the bullet points; give the reader the context that makes the bullets land. For greenfield, this captures intent. For brownfield, this is inferred from the code and domain.]
 
 - FR1: [What the system does — one sentence per requirement]
 - FR2: ...
@@ -262,7 +270,69 @@ Decisions inferred from the codebase. Code tells you what was chosen, not always
 ```markdown
 # Data Consumers
 
-## [Actor or system]
+## Inbound
+
+| Consumer | How it invokes this service | Freshness |
+| -------- | --------------------------- | --------- |
+
+## Platform
+
+| Consumer | How invoked | Freshness |
+| -------- | ----------- | --------- |
+
+## External
+
+| Consumer | How invoked | Freshness |
+| -------- | ----------- | --------- |
+
+## Storage
+
+| Resource | How invoked | Freshness |
+| -------- | ----------- | --------- |
+
+---
+
+[Detailed sections below, grouped in the same order. Only include groups that have entries.]
+
+## Inbound
+
+### [Actor or system]
+
+**What they need:** [What data or output this consumer depends on]
+
+**Why:** [Why they need it — what breaks or degrades without it]
+
+**Freshness:** [How current the data needs to be, and what drives that cadence]
+
+---
+
+## Platform
+
+### [Actor or system]
+
+**What they need:** [What data or output this consumer depends on]
+
+**Why:** [Why they need it — what breaks or degrades without it]
+
+**Freshness:** [How current the data needs to be, and what drives that cadence]
+
+---
+
+## External
+
+### [Actor or system]
+
+**What they need:** [What data or output this consumer depends on]
+
+**Why:** [Why they need it — what breaks or degrades without it]
+
+**Freshness:** [How current the data needs to be, and what drives that cadence]
+
+---
+
+## Storage
+
+### [Actor or system]
 
 **What they need:** [What data or output this consumer depends on]
 
@@ -280,13 +350,33 @@ Decisions inferred from the codebase. Code tells you what was chosen, not always
 ```markdown
 # Entities
 
-## [Entity name]
+## Internal
 
-[One sentence on what this represents in the context of this system.]
+| Entity | Why it exists |
+| ------ | ------------- |
 
-[For **external entities** (third-party API, SDK): note any non-obvious behaviour — type mismatches, naming that could mislead, invariants the system assumes. Link to the external reference rather than reproducing field definitions.]
+## External
 
-[For **internal entities** (DB models, domain objects): explain why the entity exists and what it owns. Note any non-obvious design choices. No field tables — the schema is the authoritative source for field definitions.]
+| Entity | Why it exists |
+| ------ | ------------- |
+
+---
+
+[Detailed sections below, grouped in the same order. Only include groups that have entries.]
+
+## Internal
+
+### [Entity name]
+
+[Why this entity exists and what it owns. Note any non-obvious design choices. No field tables — the schema is the authoritative source for field definitions.]
+
+---
+
+## External
+
+### [Entity name]
+
+[Note any non-obvious behaviour — type mismatches, naming that could mislead, invariants the system assumes. Link to the external reference rather than reproducing field definitions.]
 
 ---
 ```
@@ -404,13 +494,19 @@ Decisions inferred from the codebase. Code tells you what was chosen, not always
 ```markdown
 # Testing Strategy
 
-[Framework found: e.g. Jest (`package.json`). Skip if nothing found.]
+[One paragraph framing the testing philosophy for this specific system — what kinds of bugs are hardest to detect, what silent failure modes exist, and what the tests are primarily protecting against. Do not describe framework setup or mocking approach — focus on risk and intent.]
 
-[One section per risk area. For each: explain what can go wrong if it's untested, and what tests should verify. Focus on areas where a silent failure would be hard to detect downstream.]
+---
 
-## [Risk area — e.g. Pagination, Auth, Data Filtering]
+## [Risk area — e.g. Scheduling Logic, State Transitions, Decision Points]
 
-[One paragraph: what this component does, how it can fail silently, and what tests should verify. Be specific about edge cases and failure modes.]
+[One paragraph: what this area does, how it can fail silently, and what the tests must verify. Be specific about the failure mode — not "it could break" but "a bug here would cause X to happen without any visible error at the point of the regression".]
+
+---
+
+## Areas Without Coverage
+
+- [Area] — [why it matters and what a test would need to verify]
 
 ---
 ```
@@ -709,6 +805,8 @@ Key libraries and tools in use, with rationale for why they were chosen.
 
 ---
 
+[One detail section per item in the table above. Every item must have a detail section — no item should appear only in the table.]
+
 ### [Issue]
 
 **Why:** [Impact if not addressed — what breaks, degrades, or stays unknown]
@@ -728,3 +826,4 @@ Key libraries and tools in use, with rationale for why they were chosen.
 - Flag issues without editorialising — describe the problem, not a verdict on the team
 - If the codebase is large, prioritise breadth over depth in discovery — a shallow scan of everything is more useful than a deep scan of one area
 - If something is clearly absent (no tests, no logging), say so explicitly rather than leaving it blank
+- Tables must never exceed 120 characters in width (including the leading `|` and trailing `|`). Count the widest row before writing. If a cell value would make the row too wide, shorten the text — do not exceed the limit.
