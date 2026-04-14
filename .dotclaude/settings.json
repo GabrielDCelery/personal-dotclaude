@@ -7,13 +7,7 @@
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
   },
   "permissions": {
-    "allow": [
-      "WebFetch",
-      "WebSearch",
-      "Skill",
-      "mcp__context7__resolve-library-id",
-      "mcp__context7__query-docs"
-    ],
+    "allow": ["WebFetch", "WebSearch", "Skill"],
     "deny": [
       "Read(**/.env)",
       "Read(**/.env.*)",
@@ -38,6 +32,10 @@
     "type": "command",
     "command": "bunx -y ccstatusline@latest",
     "padding": 0
+  },
+  "enabledPlugins": {
+    "typescript-lsp@claude-plugins-official": true,
+    "context7@claude-plugins-official": true
   },
   "companyAnnouncements": ["Wakey wakey, eggs and bakey"]
 }
