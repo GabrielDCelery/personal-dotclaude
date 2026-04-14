@@ -35,11 +35,18 @@ Which environments exist and how they differ.
 If the AWS account is not determinable, leave it blank — do not guess.
 
 ### Pre-deployment checklist
-What must be in place before a deployment will succeed.
-Secrets, SSM parameters, environment variables, manual steps.
+What must exist before the deployment itself will succeed.
+Credentials, SSM parameters, S3 buckets, pipeline setup, manual steps.
 
-| What | Where it lives | Required for |
-| ---- | -------------- | ------------ |
+| What | Where it lives |
+| ---- | -------------- |
+
+### Runtime dependencies
+What must be deployed and running for this service to function after deployment.
+Other services, SNS topics, DynamoDB tables, external APIs.
+
+| What | Where it lives |
+| ---- | -------------- |
 
 ### Oddities
 Anything unusual, non-standard, or that a developer would not expect.
