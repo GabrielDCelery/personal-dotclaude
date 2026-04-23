@@ -1,0 +1,1 @@
+/Users/gabrielzeller/projects/ticker/ticker-dotclaude/.ticker-claude/commands/ticker-discover-deployment.md
