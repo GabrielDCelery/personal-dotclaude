@@ -79,6 +79,10 @@ for. "None found" if every changed piece of logic that needs coverage has it.>
 
 Do not soften findings to be agreeable — flag anything that would come up in a real review, including "this diff doesn't match its own commit message."
 
+Write the report to `.git/BRANCH_REVIEW.md` in the repository root, overwriting it if it already exists — a review describes the diff at the moment it ran, so a stale copy from a previous run is misleading, not useful history. Also present the same report in the chat response; the file is a durable copy to reopen or paste into a PR description, not a replacement for showing the result directly.
+
 ## Notes
 
 Works identically across any locally-cloned repository since it depends only on `git`, no repo-specific config or GitHub API access.
+
+`.git/BRANCH_REVIEW.md` lives inside the `.git` directory specifically so it's never tracked by git and never shows up in `git status` — no gitignore entry needed, no risk of it leaking into a commit.
