@@ -33,8 +33,10 @@ mise run add-mcp-servers-to-user
 ├── agents/
 │   ├── DocsExplorer.md             # Documentation lookup (Context7 + web)
 │   └── Context7DocsExplorer.md     # Documentation lookup (Context7 only)
-└── rules/
-    └── readme-styles.md            # README generation guidelines
+├── rules/
+│   └── readme-styles.md            # README generation guidelines
+└── skills/
+    └── branch-diff-review/         # Portable skill (Claude Code + Copilot Agent Skills)
 ```
 
 ## Configuration
@@ -56,7 +58,11 @@ Symlinks configuration to `~/.claude` for all projects:
 ```sh
 mise run symlink-dotclaude-to-user
 mise run add-mcp-servers-to-user
+mise run symlink-dotclaude-skills-to-copilot
 ```
+
+> [!NOTE]
+> `symlink-dotclaude-skills-to-copilot` links `.dotclaude/skills` to `~/.copilot/skills` too — Agent Skills (`SKILL.md`) are a shared open format, so the same skill works in both Claude Code and Copilot.
 
 > [!WARNING]
 > Don't symlink the entire `.dotclaude` directory to `~/.claude` - the home directory contains Claude Code's data files.

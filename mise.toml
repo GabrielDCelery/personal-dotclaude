@@ -9,6 +9,14 @@ run = """
 [ -L ~/.claude/rules ] || ln -s $(pwd)/.dotclaude/rules ~/.claude/rules;
 [ -L ~/.claude/agents ] || ln -s $(pwd)/.dotclaude/agents ~/.claude/agents;
 [ -L ~/.claude/commands ] || ln -s $(pwd)/.dotclaude/commands ~/.claude/commands;
+[ -L ~/.claude/skills ] || ln -s $(pwd)/.dotclaude/skills ~/.claude/skills;
+"""
+
+[tasks."symlink-dotclaude-skills-to-copilot"]
+description = "Symlink the shared skills from .dotclaude to ~/.copilot (skills are portable across Claude Code and Copilot)"
+run = """
+mkdir -p ~/.copilot;
+[ -L ~/.copilot/skills ] || ln -s $(pwd)/.dotclaude/skills ~/.copilot/skills;
 """
 
 [tasks."add-mcp-servers-to-user"]
