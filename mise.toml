@@ -1,8 +1,17 @@
 [env]
 _.file = ".env"
 
-[tasks."symlink-dotclaude-to-user"]
-description = "Symlink the relevant files from .dotclaude to ~/.claude"
+[tasks."bootstrap-claude-code"]
+description = "Bootstrap Claude Code: symlink config and register MCP servers"
+depends = [
+    "bootstrap-claude-code:symlink",
+    "bootstrap-claude-code:context7",
+    "bootstrap-claude-code:atlassian-confluence",
+    "bootstrap-claude-code:atlassian-jira",
+]
+
+[tasks."bootstrap-claude-code:symlink"]
+description = "Symlink .dotclaude to ~/.claude"
 run = """
 [ -L ~/.claude/settings.json ] || ln -s $(pwd)/.dotclaude/settings.json ~/.claude/settings.json;
 [ -L ~/.claude/CLAUDE.md ] || ln -s $(pwd)/.dotclaude/CLAUDE.md ~/.claude/CLAUDE.md;
@@ -12,19 +21,53 @@ run = """
 [ -L ~/.claude/skills ] || ln -s $(pwd)/.dotclaude/skills ~/.claude/skills;
 """
 
-[tasks."symlink-dotclaude-skills-to-copilot"]
-description = "Symlink the shared skills from .dotclaude to ~/.copilot (skills are portable across Claude Code and Copilot)"
+[tasks."bootstrap-claude-code:context7"]
+description = "Register the Context7 MCP server (skips if CONTEXT7_API_KEY is unset)"
+run = """
+if claude mcp get context7 >/dev/null 2>&1; then
+    echo "skip: Context7 MCP server is already registered"
+elif [ -z "${CONTEXT7_API_KEY}" ]; then
+    echo "skip: CONTEXT7_API_KEY is not set, not registering Context7 MCP server"
+else
+    claude mcp add --header "CONTEXT7_API_KEY: ${CONTEXT7_API_KEY}" -s user --transport http context7 https://mcp.context7.com/mcp
+fi
+"""
+
+[tasks."bootstrap-claude-code:atlassian-confluence"]
+description = "Register the Atlassian Confluence MCP server (skips if WORK_CONFLUENCE_AUTH_HEADER is unset)"
+run = '''
+if claude mcp get atlassian-confluence >/dev/null 2>&1; then
+    echo "skip: Atlassian Confluence MCP server is already registered"
+elif [ -z "${WORK_CONFLUENCE_AUTH_HEADER}" ]; then
+    echo "skip: WORK_CONFLUENCE_AUTH_HEADER is not set, not registering Atlassian Confluence MCP server"
+else
+    claude mcp add-json atlassian-confluence "{\"type\":\"http\",\"url\":\"https://mcp.atlassian.com/v1/mcp\",\"headers\":{\"Authorization\":\"${WORK_CONFLUENCE_AUTH_HEADER}\"}}" --scope user
+fi
+'''
+
+[tasks."bootstrap-claude-code:atlassian-jira"]
+description = "Register the Atlassian Jira MCP server (skips if WORK_JIRA_AUTH_HEADER is unset)"
+run = '''
+if claude mcp get atlassian-jira >/dev/null 2>&1; then
+    echo "skip: Atlassian Jira MCP server is already registered"
+elif [ -z "${WORK_JIRA_AUTH_HEADER}" ]; then
+    echo "skip: WORK_JIRA_AUTH_HEADER is not set, not registering Atlassian Jira MCP server"
+else
+    claude mcp add-json atlassian-jira "{\"type\":\"http\",\"url\":\"https://mcp.atlassian.com/v1/mcp\",\"headers\":{\"Authorization\":\"${WORK_JIRA_AUTH_HEADER}\"}}" --scope user
+fi
+'''
+
+[tasks."bootstrap-copilot"]
+description = "Bootstrap Copilot: symlink config"
+depends = ["bootstrap-copilot:symlink"]
+
+[tasks."bootstrap-copilot:symlink"]
+description = "Symlink .dotclaude to ~/.copilot"
 run = """
 mkdir -p ~/.copilot;
 [ -L ~/.copilot/skills ] || ln -s $(pwd)/.dotclaude/skills ~/.copilot/skills;
-"""
-
-[tasks."add-mcp-servers-to-user"]
-description = "Adds MCP servers to user"
-run = """
-if [ -z "${CONTEXT7_API_KEY}" ]; then
-    echo "error: CONTEXT7_API_KEY environment variable is not set"
-    exit 1
+[ -L ~/.copilot/mcp-config.json ] || ln -s $(pwd)/.dotclaude/mcp.json ~/.copilot/mcp-config.json;
+if [ -z "${WORK_CONFLUENCE_AUTH_HEADER}" ] || [ -z "${WORK_JIRA_AUTH_HEADER}" ]; then
+    echo "warning: WORK_CONFLUENCE_AUTH_HEADER / WORK_JIRA_AUTH_HEADER are not set in this shell — Copilot resolves these at its own startup, so set them before launching Copilot for Atlassian MCP auth to work";
 fi
-claude mcp add --header "CONTEXT7_API_KEY: ${CONTEXT7_API_KEY}" -s user --transport http context7 https://mcp.context7.com/mcp
 """

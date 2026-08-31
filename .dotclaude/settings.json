@@ -44,6 +44,7 @@
     "pyright-lsp@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": true
   },
-  "companyAnnouncements": ["Wakey wakey, eggs and bakey"],
-  "model": "opus"
+  "companyAnnouncements": [
+    "Wakey wakey, eggs and bakey"
+  ]
 }

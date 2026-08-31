@@ -12,15 +12,15 @@ Shared Claude Code configuration for personal repositories. Provides default pro
 ```sh
 git clone git@github.com:GabrielDCelery/personal-dotclaude.git
 cd personal-dotclaude
-mise run symlink-dotclaude-to-user
-mise run add-mcp-servers-to-user
+mise run bootstrap-claude-code
+mise run bootstrap-copilot
 ```
 
 ## Architecture
 
 - **Type**: Configuration repository
 - **Task Runner**: mise
-- **MCP Servers**: Context7 (documentation lookup)
+- **MCP Servers**: Context7 (documentation lookup), Atlassian Confluence & Jira (via Atlassian's official Rovo MCP server)
 - **Custom Agents**: DocsExplorer, Context7DocsExplorer
 - **Custom Rules**: README generation guidelines
 
@@ -30,6 +30,7 @@ mise run add-mcp-servers-to-user
 .dotclaude/
 ├── CLAUDE.md                        # Default project context
 ├── settings.json                    # Claude Code settings
+├── mcp.json                         # Shared MCP server config (Claude Code + Copilot)
 ├── agents/
 │   ├── DocsExplorer.md             # Documentation lookup (Context7 + web)
 │   └── Context7DocsExplorer.md     # Documentation lookup (Context7 only)
@@ -44,8 +45,25 @@ mise run add-mcp-servers-to-user
 | Variable | Description | Required | Default |
 | -------- | ----------- | -------- | ------- |
 | CONTEXT7_API_KEY | API key for Context7 MCP server | Yes | None |
+| WORK_CONFLUENCE_AUTH_HEADER | `Basic <base64(email:token)>` header for the Atlassian Confluence MCP server | For Atlassian MCP servers | None |
+| WORK_JIRA_AUTH_HEADER | `Basic <base64(email:token)>` header for the Atlassian Jira MCP server | For Atlassian MCP servers | None |
 
-Secrets are stored in `.env` locally.
+Secrets are stored in `.env` locally, except the `WORK_*` variables below.
+
+### Atlassian MCP auth
+
+The Atlassian MCP servers (`atlassian-confluence`, `atlassian-jira`) authenticate with [scoped Atlassian API tokens](https://id.atlassian.com/manage-profile/security/api-tokens) ("Create API token with scopes", not the classic kind) over HTTP Basic Auth. A token only grants tools for the product it was scoped to, so Confluence and Jira need separate tokens.
+
+These are machine-specific work credentials, so they're never written into this repo — `WORK_CONFLUENCE_AUTH_HEADER`/`WORK_JIRA_AUTH_HEADER` are expected to already be set in the environment before running `bootstrap-claude-code` (its `bootstrap-claude-code:atlassian-confluence`/`bootstrap-claude-code:atlassian-jira` subtasks skip with a log message if they're unset, rather than failing). On machines that need Atlassian access, they're populated by `.zshrc.work` in [personal-dotfiles](https://github.com/GabrielDCelery/personal-dotfiles), which reads from `pass`:
+
+```sh
+pass insert work/email
+pass insert work/atlassian/confluence-api-token
+pass insert work/atlassian/jira-api-token
+```
+
+> [!NOTE]
+> Copilot CLI's `${VAR}` expansion inside `mcp-config.json` headers has been flaky across versions ([github/copilot-cli#1403](https://github.com/github/copilot-cli/issues/1403)). If the symlinked config doesn't pick up the header, that's the first thing to check.
 
 ## Setup
 
@@ -53,16 +71,17 @@ Prerequisites: [Claude Code](https://code.claude.com/docs/en/setup) installed wi
 
 ### Option A: User-wide setup (recommended)
 
-Symlinks configuration to `~/.claude` for all projects:
+Symlinks configuration to `~/.claude` and/or `~/.copilot`:
 
 ```sh
-mise run symlink-dotclaude-to-user
-mise run add-mcp-servers-to-user
-mise run symlink-dotclaude-skills-to-copilot
+mise run bootstrap-claude-code   # symlinks to ~/.claude, registers Context7 + Atlassian MCP servers
+mise run bootstrap-copilot       # symlinks to ~/.copilot
 ```
 
+Each is a parent task made up of independent subtasks (`mise tasks` to see the tree, e.g. `bootstrap-claude-code:context7`). The Context7 and Atlassian subtasks each check for their own required env var and skip with a log message — rather than failing — if it's not set, so running `bootstrap-claude-code` on a personal machine without `WORK_CONFLUENCE_AUTH_HEADER`/`WORK_JIRA_AUTH_HEADER` just skips those two servers.
+
 > [!NOTE]
-> `symlink-dotclaude-skills-to-copilot` links `.dotclaude/skills` to `~/.copilot/skills` too — Agent Skills (`SKILL.md`) are a shared open format, so the same skill works in both Claude Code and Copilot.
+> `bootstrap-claude-code` and `bootstrap-copilot` are independent — run either or both depending on which tool(s) you use. They share the same underlying files: Agent Skills (`SKILL.md`) are a shared open format and the MCP config schema is compatible, so `.dotclaude/skills` and `.dotclaude/mcp.json` work unmodified in both Claude Code and Copilot.
 
 > [!WARNING]
 > Don't symlink the entire `.dotclaude` directory to `~/.claude` - the home directory contains Claude Code's data files.
