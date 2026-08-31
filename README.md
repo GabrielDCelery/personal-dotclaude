@@ -42,11 +42,11 @@ mise run bootstrap-copilot
 
 ## Configuration
 
-| Variable | Description | Required | Default |
-| -------- | ----------- | -------- | ------- |
-| CONTEXT7_API_KEY | API key for Context7 MCP server | Yes | None |
-| WORK_CONFLUENCE_AUTH_HEADER | `Basic <base64(email:token)>` header for the Atlassian Confluence MCP server | For Atlassian MCP servers | None |
-| WORK_JIRA_AUTH_HEADER | `Basic <base64(email:token)>` header for the Atlassian Jira MCP server | For Atlassian MCP servers | None |
+| Variable                    | Description                                                                  | Required                  | Default |
+| --------------------------- | ---------------------------------------------------------------------------- | ------------------------- | ------- |
+| CONTEXT7_API_KEY            | API key for Context7 MCP server                                              | Yes                       | None    |
+| WORK_CONFLUENCE_AUTH_HEADER | `Basic <base64(email:token)>` header for the Atlassian Confluence MCP server | For Atlassian MCP servers | None    |
+| WORK_JIRA_AUTH_HEADER       | `Basic <base64(email:token)>` header for the Atlassian Jira MCP server       | For Atlassian MCP servers | None    |
 
 Secrets are stored in `.env` locally, except the `WORK_*` variables below.
 
