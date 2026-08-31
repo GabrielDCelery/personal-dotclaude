@@ -52,7 +52,7 @@ Secrets are stored in `.env` locally, except the `WORK_*` variables below.
 
 ### Atlassian MCP auth
 
-The Atlassian MCP servers (`atlassian-confluence`, `atlassian-jira`) authenticate with [scoped Atlassian API tokens](https://id.atlassian.com/manage-profile/security/api-tokens) ("Create API token with scopes", not the classic kind) over HTTP Basic Auth. A token only grants tools for the product it was scoped to, so Confluence and Jira need separate tokens.
+The Atlassian MCP servers (`work-atlassian-confluence`, `work-atlassian-jira`) authenticate with [scoped Atlassian API tokens](https://id.atlassian.com/manage-profile/security/api-tokens) ("Create API token with scopes", not the classic kind) over HTTP Basic Auth. A token only grants tools for the product it was scoped to, so Confluence and Jira need separate tokens.
 
 These are machine-specific work credentials, so they're never written into this repo — `WORK_CONFLUENCE_AUTH_HEADER`/`WORK_JIRA_AUTH_HEADER` are expected to already be set in the environment before running `bootstrap-claude-code` (its `bootstrap-claude-code:atlassian-confluence`/`bootstrap-claude-code:atlassian-jira` subtasks skip with a log message if they're unset, rather than failing). On machines that need Atlassian access, they're populated by `.zshrc.work` in [personal-dotfiles](https://github.com/GabrielDCelery/personal-dotfiles), which reads from `pass`:
 

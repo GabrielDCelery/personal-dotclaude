@@ -3,6 +3,7 @@ _.file = ".env"
 
 [tasks."chmod-scripts"]
 description = "Make scripts/*.sh executable"
+hide = true
 run = "chmod +x scripts/*.sh"
 
 [tasks."bootstrap-claude-code"]
@@ -16,21 +17,25 @@ depends = [
 
 [tasks."bootstrap-claude-code:symlink"]
 description = "Symlink .dotclaude to ~/.claude"
+hide = true
 depends = ["chmod-scripts"]
 run = "scripts/bootstrap-claude-code-symlink.sh"
 
 [tasks."bootstrap-claude-code:context7"]
 description = "Register the Context7 MCP server (skips if CONTEXT7_API_KEY is unset)"
+hide = true
 depends = ["chmod-scripts"]
 run = "scripts/bootstrap-claude-code-context7.sh"
 
 [tasks."bootstrap-claude-code:atlassian-confluence"]
 description = "Register the Atlassian Confluence MCP server (skips if WORK_CONFLUENCE_AUTH_HEADER is unset)"
+hide = true
 depends = ["chmod-scripts"]
 run = "scripts/bootstrap-claude-code-atlassian-confluence.sh"
 
 [tasks."bootstrap-claude-code:atlassian-jira"]
 description = "Register the Atlassian Jira MCP server (skips if WORK_JIRA_AUTH_HEADER is unset)"
+hide = true
 depends = ["chmod-scripts"]
 run = "scripts/bootstrap-claude-code-atlassian-jira.sh"
 
@@ -40,5 +45,6 @@ depends = ["bootstrap-copilot:symlink"]
 
 [tasks."bootstrap-copilot:symlink"]
 description = "Symlink .dotclaude to ~/.copilot"
+hide = true
 depends = ["chmod-scripts"]
 run = "scripts/bootstrap-copilot-symlink.sh"

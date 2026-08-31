@@ -1,13 +1,13 @@
 {
   "mcpServers": {
-    "atlassian-confluence": {
+    "work-atlassian-confluence": {
       "type": "http",
       "url": "https://mcp.atlassian.com/v1/mcp",
       "headers": {
         "Authorization": "${WORK_CONFLUENCE_AUTH_HEADER}"
       }
     },
-    "atlassian-jira": {
+    "work-atlassian-jira": {
       "type": "http",
       "url": "https://mcp.atlassian.com/v1/mcp",
       "headers": {
