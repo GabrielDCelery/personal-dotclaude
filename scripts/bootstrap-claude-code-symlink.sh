@@ -7,3 +7,4 @@ set -e
 [ -L ~/.claude/agents ] || ln -s "$(pwd)/.dotclaude/agents" ~/.claude/agents
 [ -L ~/.claude/commands ] || ln -s "$(pwd)/.dotclaude/commands" ~/.claude/commands
 [ -L ~/.claude/skills ] || ln -s "$(pwd)/.dotclaude/skills" ~/.claude/skills
+[ -L ~/.claude/output-styles ] || ln -s "$(pwd)/.dotclaude/output-styles" ~/.claude/output-styles
